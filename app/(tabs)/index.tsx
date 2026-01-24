@@ -1,11 +1,10 @@
-import { View } from "react-native";
-import Button from "../components/Button";
+import { Text, View } from "react-native";
 
 export default function Index() {
   return (
-    <View style={{ flex: 1, padding: 20 }}
+    <View style={{ padding: 20 }}
     >
-      <Button label="Custom Button" />
+      <Text>Welcome to the Baby Tracker App!</Text>
     </View>
   );
 }
