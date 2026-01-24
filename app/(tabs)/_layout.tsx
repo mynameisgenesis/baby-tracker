@@ -1,0 +1,13 @@
+import IonIcon from '@expo/vector-icons/Ionicons';
+import { Tabs } from 'expo-router';
+
+export default function TableLayout() {
+  return <Tabs screenOptions={{tabBarActiveTintColor: '#d3d3ff', headerStyle: {backgroundColor: '#967bb6'}, headerShadowVisible: false, headerTitleStyle: {color: '#d3d3ff'}, tabBarStyle: {backgroundColor: '#1e1e2e'}, tabBarInactiveTintColor: '#8080aa'}} >
+    <Tabs.Screen name="index" options={{ title: 'Home', tabBarIcon: ({color, focused}) => (
+      <IonIcon name={focused ? 'home' : 'home-outline'} size={24} color={color} />
+    )}} />
+    <Tabs.Screen name="history" options={{ title: 'History', tabBarIcon: ({color, focused}) => (
+      <IonIcon name={focused ? 'time' : 'time-outline'} size={24} color={color} />
+    ) }} /> 
+  </Tabs>;
+}
