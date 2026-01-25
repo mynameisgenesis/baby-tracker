@@ -1,2 +1,2 @@
-import LogScreen from "../screens/log/LogScreen";
+import { LogScreen } from "../screens/log/LogScreen";
 export default LogScreen;

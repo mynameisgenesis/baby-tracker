@@ -2,10 +2,9 @@ import { router } from "expo-router";
 import React, { useMemo } from "react";
 import { Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
 import { emojiForType, formatTime, labelForEvent, minutesAgo } from "../../data/helpers";
-import { BabyEvent, EventType } from "../../data/types";
+import type { BabyEvent, EventType } from "../../data/types";
 
-export default function HomeScreen() {
-  // Mock “today” data so the UI is not empty while we wire storage.
+export function HomeScreen() {
   const events: BabyEvent[] = useMemo(() => {
     const now = Date.now();
     const data = [
