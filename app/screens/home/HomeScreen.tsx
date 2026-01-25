@@ -1,37 +1,29 @@
 import { router } from "expo-router";
 import React, { useMemo } from "react";
 import { Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
+
+import { useEvents } from "../../data/eventsStore";
 import { emojiForType, formatTime, labelForEvent, minutesAgo } from "../../data/helpers";
-import type { BabyEvent, EventType } from "../../data/types";
+import type { EventType } from "../../data/types";
 
 export function HomeScreen() {
-  const events: BabyEvent[] = useMemo(() => {
-    const now = Date.now();
-    const data = [
-      { id: "1", type: "feed", occurredAt: now - 35 * 60_000, feedMethod: "bottle" },
-      { id: "2", type: "diaper", occurredAt: now - 80 * 60_000, diaperKind: "pee" },
-      { id: "3", type: "sleep", occurredAt: now - 3 * 60 * 60_000, durationMin: 52 },
-      { id: "4", type: "tummy", occurredAt: now - 6 * 60 * 60_000, durationMin: 8 },
-    ] satisfies BabyEvent[];
-    return data.sort((a, b) => b.occurredAt - a.occurredAt);
-  }, []);
+  const { events } = useEvents();
 
+  // Build last-event map for stats strip
   const lastByType = useMemo(() => {
-    const map = new Map<EventType, BabyEvent>();
+    const map = new Map<EventType, (typeof events)[number]>();
     for (const e of events) {
       if (!map.has(e.type)) map.set(e.type, e);
     }
     return map;
   }, [events]);
 
-  // Pretend there is an active sleep session sometimes.
+  // Placeholder for timer feature later:
   const sleepActive = false;
-  const sleepActiveSince = Date.now() - 28 * 60_000; // 28 min
+  const sleepActiveSince = Date.now() - 28 * 60_000;
 
   const quickLog = (type: EventType) => {
-    // If you create a modal route like /modal/log?type=feed etc, use this:
-    // router.push(`/modal/log?type=${type}`);
-    // For now: push to Log tab (you already have it).
+    // For now we just go to Log tab; later we can open a modal pre-selected by type.
     router.push("/log");
   };
 
@@ -77,7 +69,7 @@ export function HomeScreen() {
         <QuickButton title="Tummy" icon="🤸" onPress={() => quickLog("tummy")} />
       </View>
 
-      {/* Now card (active timer) */}
+      {/* Now card */}
       <Text style={styles.sectionTitle}>Right now</Text>
       <View style={styles.card}>
         {sleepActive ? (
@@ -114,14 +106,10 @@ export function HomeScreen() {
 
       <View style={styles.card}>
         {events.length === 0 ? (
-          <Text style={styles.cardText}>No events yet. Start logging above.</Text>
+          <Text style={styles.cardText}>No events yet. Tap a Quick Log button above.</Text>
         ) : (
           events.slice(0, 6).map((e) => (
-            <Pressable
-              key={e.id}
-              style={styles.eventRow}
-              onPress={() => router.push(`/event/${e.id}`)}
-            >
+            <Pressable key={e.id} style={styles.eventRow} onPress={() => router.push(`/event/${e.id}`)}>
               <Text style={styles.eventIcon}>{emojiForType(e.type)}</Text>
               <View style={{ flex: 1 }}>
                 <Text style={styles.eventTitle}>{labelForEvent(e)}</Text>
