@@ -1,9 +1,224 @@
-import { Text, View } from "react-native";
+import { router } from "expo-router";
+import React, { useMemo } from "react";
+import { Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
+import { emojiForType, formatTime, labelForEvent, minutesAgo } from "../../data/helpers";
+import { BabyEvent, EventType } from "../../data/types";
 
 export default function HomeScreen() {
+  // Mock “today” data so the UI is not empty while we wire storage.
+  const events: BabyEvent[] = useMemo(() => {
+    const now = Date.now();
+    const data = [
+      { id: "1", type: "feed", occurredAt: now - 35 * 60_000, feedMethod: "bottle" },
+      { id: "2", type: "diaper", occurredAt: now - 80 * 60_000, diaperKind: "pee" },
+      { id: "3", type: "sleep", occurredAt: now - 3 * 60 * 60_000, durationMin: 52 },
+      { id: "4", type: "tummy", occurredAt: now - 6 * 60 * 60_000, durationMin: 8 },
+    ] satisfies BabyEvent[];
+    return data.sort((a, b) => b.occurredAt - a.occurredAt);
+  }, []);
+
+  const lastByType = useMemo(() => {
+    const map = new Map<EventType, BabyEvent>();
+    for (const e of events) {
+      if (!map.has(e.type)) map.set(e.type, e);
+    }
+    return map;
+  }, [events]);
+
+  // Pretend there is an active sleep session sometimes.
+  const sleepActive = false;
+  const sleepActiveSince = Date.now() - 28 * 60_000; // 28 min
+
+  const quickLog = (type: EventType) => {
+    // If you create a modal route like /modal/log?type=feed etc, use this:
+    // router.push(`/modal/log?type=${type}`);
+    // For now: push to Log tab (you already have it).
+    router.push("/log");
+  };
+
   return (
-    <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
-      <Text>Home</Text>
+    <ScrollView style={styles.container} contentContainerStyle={styles.content}>
+      {/* Header */}
+      <View style={styles.header}>
+        <View>
+          <Text style={styles.title}>Today</Text>
+          <Text style={styles.subTitle}>Baby Tracker</Text>
+        </View>
+
+        <Pressable style={styles.headerBtn} onPress={() => router.push("/timeline")}>
+          <Text style={styles.headerBtnText}>Timeline</Text>
+        </Pressable>
+      </View>
+
+      {/* Stats strip */}
+      <View style={styles.statsRow}>
+        <StatPill label="Feed" value={lastByType.get("feed") ? minutesAgo(lastByType.get("feed")!.occurredAt) : "—"} />
+        <StatPill
+          label="Diaper"
+          value={lastByType.get("diaper") ? minutesAgo(lastByType.get("diaper")!.occurredAt) : "—"}
+        />
+        <StatPill
+          label="Sleep"
+          value={lastByType.get("sleep") ? minutesAgo(lastByType.get("sleep")!.occurredAt) : "—"}
+        />
+        <StatPill
+          label="Tummy"
+          value={lastByType.get("tummy") ? minutesAgo(lastByType.get("tummy")!.occurredAt) : "—"}
+        />
+      </View>
+
+      {/* Quick log */}
+      <Text style={styles.sectionTitle}>Quick Log</Text>
+      <View style={styles.quickRow}>
+        <QuickButton title="Feed" icon="🍼" onPress={() => quickLog("feed")} />
+        <QuickButton title="Diaper" icon="🧷" onPress={() => quickLog("diaper")} />
+      </View>
+      <View style={styles.quickRow}>
+        <QuickButton title="Sleep" icon="💤" onPress={() => quickLog("sleep")} />
+        <QuickButton title="Tummy" icon="🤸" onPress={() => quickLog("tummy")} />
+      </View>
+
+      {/* Now card (active timer) */}
+      <Text style={styles.sectionTitle}>Right now</Text>
+      <View style={styles.card}>
+        {sleepActive ? (
+          <>
+            <Text style={styles.cardTitle}>Sleeping</Text>
+            <Text style={styles.cardText}>Started {minutesAgo(sleepActiveSince)} • Tap to end</Text>
+            <Pressable style={styles.primaryBtn} onPress={() => router.push("/log")}>
+              <Text style={styles.primaryBtnText}>End Sleep</Text>
+            </Pressable>
+          </>
+        ) : (
+          <>
+            <Text style={styles.cardTitle}>No active timers</Text>
+            <Text style={styles.cardText}>Start sleep or tummy time when it begins.</Text>
+            <View style={{ flexDirection: "row", gap: 10 }}>
+              <Pressable style={styles.secondaryBtn} onPress={() => quickLog("sleep")}>
+                <Text style={styles.secondaryBtnText}>Start Sleep</Text>
+              </Pressable>
+              <Pressable style={styles.secondaryBtn} onPress={() => quickLog("tummy")}>
+                <Text style={styles.secondaryBtnText}>Start Tummy</Text>
+              </Pressable>
+            </View>
+          </>
+        )}
+      </View>
+
+      {/* Mini timeline */}
+      <View style={styles.sectionHeaderRow}>
+        <Text style={styles.sectionTitle}>Recent</Text>
+        <Pressable onPress={() => router.push("/timeline")}>
+          <Text style={styles.link}>See all</Text>
+        </Pressable>
+      </View>
+
+      <View style={styles.card}>
+        {events.length === 0 ? (
+          <Text style={styles.cardText}>No events yet. Start logging above.</Text>
+        ) : (
+          events.slice(0, 6).map((e) => (
+            <Pressable
+              key={e.id}
+              style={styles.eventRow}
+              onPress={() => router.push(`/event/${e.id}`)}
+            >
+              <Text style={styles.eventIcon}>{emojiForType(e.type)}</Text>
+              <View style={{ flex: 1 }}>
+                <Text style={styles.eventTitle}>{labelForEvent(e)}</Text>
+                <Text style={styles.eventMeta}>
+                  {formatTime(e.occurredAt)} • {minutesAgo(e.occurredAt)}
+                </Text>
+              </View>
+              <Text style={styles.chev}>›</Text>
+            </Pressable>
+          ))
+        )}
+      </View>
+
+      {/* Tip card */}
+      <Text style={styles.sectionTitle}>Tip</Text>
+      <View style={styles.card}>
+        <Text style={styles.cardTitle}>Tummy time micro-sessions</Text>
+        <Text style={styles.cardText}>
+          Short bursts count. Try 2–3 minutes after a diaper change when baby is calm. Stack wins.
+        </Text>
+        <Pressable style={styles.secondaryBtn} onPress={() => router.push("/tips")}>
+          <Text style={styles.secondaryBtnText}>More tips</Text>
+        </Pressable>
+      </View>
+
+      <View style={{ height: 24 }} />
+    </ScrollView>
+  );
+}
+
+function StatPill({ label, value }: { label: string; value: string }) {
+  return (
+    <View style={styles.pill}>
+      <Text style={styles.pillLabel}>{label}</Text>
+      <Text style={styles.pillValue}>{value}</Text>
     </View>
   );
 }
+
+function QuickButton({ title, icon, onPress }: { title: string; icon: string; onPress: () => void }) {
+  return (
+    <Pressable style={styles.quickBtn} onPress={onPress}>
+      <Text style={styles.quickIcon}>{icon}</Text>
+      <Text style={styles.quickText}>{title}</Text>
+    </Pressable>
+  );
+}
+
+const styles = StyleSheet.create({
+  container: { flex: 1, backgroundColor: "#fff" },
+  content: { padding: 16, gap: 12 },
+
+  header: { flexDirection: "row", alignItems: "center", justifyContent: "space-between", marginBottom: 6 },
+  title: { fontSize: 28, fontWeight: "700" },
+  subTitle: { fontSize: 13, opacity: 0.6 },
+
+  headerBtn: { paddingHorizontal: 12, paddingVertical: 10, borderRadius: 12, borderWidth: 1, borderColor: "#ddd" },
+  headerBtnText: { fontWeight: "600" },
+
+  statsRow: { flexDirection: "row", gap: 10, flexWrap: "wrap" },
+
+  pill: { padding: 12, borderRadius: 16, borderWidth: 1, borderColor: "#eee", minWidth: 150 },
+  pillLabel: { fontSize: 12, opacity: 0.6, marginBottom: 4 },
+  pillValue: { fontSize: 16, fontWeight: "700" },
+
+  sectionTitle: { fontSize: 16, fontWeight: "700", marginTop: 6 },
+  sectionHeaderRow: { flexDirection: "row", justifyContent: "space-between", alignItems: "center" },
+  link: { fontWeight: "600", opacity: 0.7 },
+
+  quickRow: { flexDirection: "row", gap: 12 },
+  quickBtn: {
+    flex: 1,
+    borderRadius: 18,
+    borderWidth: 1,
+    borderColor: "#eee",
+    padding: 16,
+    alignItems: "center",
+    justifyContent: "center",
+    gap: 8,
+  },
+  quickIcon: { fontSize: 26 },
+  quickText: { fontSize: 14, fontWeight: "700" },
+
+  card: { borderRadius: 18, borderWidth: 1, borderColor: "#eee", padding: 16, gap: 10 },
+  cardTitle: { fontSize: 16, fontWeight: "800" },
+  cardText: { opacity: 0.75, lineHeight: 20 },
+
+  primaryBtn: { padding: 14, borderRadius: 14, borderWidth: 1, borderColor: "#ddd", alignItems: "center" },
+  primaryBtnText: { fontWeight: "800" },
+
+  secondaryBtn: { padding: 12, borderRadius: 14, borderWidth: 1, borderColor: "#eee", alignItems: "center" },
+  secondaryBtnText: { fontWeight: "700", opacity: 0.85 },
+
+  eventRow: { flexDirection: "row", alignItems: "center", paddingVertical: 10, gap: 10 },
+  eventIcon: { fontSize: 20, width: 28, textAlign: "center" },
+  eventTitle: { fontWeight: "700" },
+  eventMeta: { fontSize: 12, opacity: 0.6, marginTop: 2 },
+  chev: { fontSize: 22, opacity: 0.25, paddingLeft: 6 },
+});
