@@ -51,3 +51,25 @@ export function startOfDay(ts: number) {
   d.setHours(0, 0, 0, 0);
   return d.getTime();
 }
+
+export function formatDurationMin(min?: number) {
+  if (min == null) return "";
+  const total = Math.max(0, Math.floor(min));
+  const h = Math.floor(total / 60);
+  const m = total % 60;
+
+  if (h <= 0) return `${m}m`;
+  if (m === 0) return `${h}h`;
+  return `${h}h ${m}m`;
+}
+
+// optional (nice for live timers later)
+export function formatDurationMs(ms: number) {
+  const totalSec = Math.max(0, Math.floor(ms / 1000));
+  const h = Math.floor(totalSec / 3600);
+  const m = Math.floor((totalSec % 3600) / 60);
+  const s = totalSec % 60;
+
+  if (h > 0) return `${h}:${String(m).padStart(2, "0")}:${String(s).padStart(2, "0")}`;
+  return `${m}:${String(s).padStart(2, "0")}`;
+}

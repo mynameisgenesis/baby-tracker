@@ -12,22 +12,22 @@ export type BabyEvent = {
   note?: string;
 };
 
-export type AddEventInput =
-  | { type: "diaper"; occurredAt: number; diaperKind: DiaperKind; note?: string }
-  | { type: "feed"; occurredAt: number; feedMethod: FeedMethod; note?: string }
-  | { type: "sleep"; occurredAt: number; durationMin?: number; note?: string }
-  | { type: "tummy"; occurredAt: number; durationMin?: number; note?: string };
-
-export type EventsContextValue = {
-  events: BabyEvent[];
-  addEvent: (input: AddEventInput) => BabyEvent;
-  getLastByType: (type: EventType) => BabyEvent | undefined;
-  clearAll: () => void;
-};
-
 export type TimelineSection = {
   title: string;
   data: BabyEvent[];
 };
 
 export type FilterKey = "all" | EventType;
+
+// src/data/types.ts
+
+export type SessionType = "sleep" | "tummy_time";
+
+export type BabySession = {
+  id: string;
+  type: SessionType;
+  startAt: number; // epoch ms
+  endAt?: number;  // missing = active
+  note?: string;
+};
+

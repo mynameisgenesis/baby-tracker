@@ -3,8 +3,9 @@ import React, { useMemo } from "react";
 import { Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
 
 import { useEvents } from "../../data/eventsStore";
-import { emojiForType, formatTime, labelForEvent, minutesAgo } from "../../data/helpers";
+import { emojiForType, formatDurationMin, formatTime, labelForEvent, minutesAgo } from "../../data/helpers";
 import type { EventType } from "../../data/types";
+
 
 export function HomeScreen() {
   const { events } = useEvents();
@@ -115,6 +116,7 @@ export function HomeScreen() {
                 <Text style={styles.eventTitle}>{labelForEvent(e)}</Text>
                 <Text style={styles.eventMeta}>
                   {formatTime(e.occurredAt)} • {minutesAgo(e.occurredAt)}
+                  {e.durationMin != null ? ` • ${formatDurationMin(e.durationMin)}` : ""}
                 </Text>
               </View>
               <Text style={styles.chev}>›</Text>

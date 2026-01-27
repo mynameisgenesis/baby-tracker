@@ -1,5 +1,6 @@
 import React, { useMemo, useState } from "react";
 import {
+  Alert,
   KeyboardAvoidingView,
   Modal,
   Platform,
@@ -11,12 +12,16 @@ import {
   View,
 } from "react-native";
 import { useEvents } from "../../data/eventsStore";
+import { formatDurationMin, minutesAgo } from "../../data/helpers";
 import type { DiaperKind, EventType, FeedMethod } from "../../data/types";
 
-type ActiveForm = null | EventType;
+type ActiveForm = null | Extract<EventType, "feed" | "diaper">;
 
 export function LogScreen() {
-  const { addEvent, events, clearAll } = useEvents();
+  const { addEvent, events, clearAll, startSession, endSession, getActiveSession } = useEvents();
+
+  const activeSleep = getActiveSession("sleep");
+  const activeTummy = getActiveSession("tummy_time");
 
   const [active, setActive] = useState<ActiveForm>(null);
 
@@ -30,9 +35,6 @@ export function LogScreen() {
   // feed form
   const [feedMethod, setFeedMethod] = useState<FeedMethod>("bottle");
 
-  // duration form (sleep/tummy)
-  const [durationMin, setDurationMin] = useState<string>("");
-
   const last = useMemo(() => events[0], [events]);
 
   function resetForm() {
@@ -40,10 +42,9 @@ export function LogScreen() {
     setOccurredAt(Date.now());
     setDiaperKind("pee");
     setFeedMethod("bottle");
-    setDurationMin("");
   }
 
-  function openForm(type: EventType) {
+  function openForm(type: ActiveForm extends null ? never : ActiveForm) {
     resetForm();
     setActive(type);
   }
@@ -54,19 +55,39 @@ export function LogScreen() {
 
   function save() {
     const when = occurredAt || Date.now();
-    const dur = durationMin.trim() === "" ? undefined : Number(durationMin);
+    const cleanNote = note.trim() || undefined;
 
     if (active === "diaper") {
-      addEvent({ type: "diaper", occurredAt: when, diaperKind, note: note.trim() || undefined });
+      addEvent({ type: "diaper", occurredAt: when, diaperKind, note: cleanNote });
     } else if (active === "feed") {
-      addEvent({ type: "feed", occurredAt: when, feedMethod, note: note.trim() || undefined });
-    } else if (active === "sleep") {
-      addEvent({ type: "sleep", occurredAt: when, durationMin: isFinite(dur as number) ? dur : undefined, note: note.trim() || undefined });
-    } else if (active === "tummy") {
-      addEvent({ type: "tummy", occurredAt: when, durationMin: isFinite(dur as number) ? dur : undefined, note: note.trim() || undefined });
+      addEvent({ type: "feed", occurredAt: when, feedMethod, note: cleanNote });
     }
 
     closeForm();
+  }
+
+  function toggleSleep() {
+    try {
+      if (activeSleep) {
+        endSession("sleep");
+      } else {
+        startSession("sleep");
+      }
+    } catch (e: any) {
+      Alert.alert("Timer error", e?.message ?? "Something went wrong.");
+    }
+  }
+
+  function toggleTummy() {
+    try {
+      if (activeTummy) {
+        endSession("tummy_time");
+      } else {
+        startSession("tummy_time");
+      }
+    } catch (e: any) {
+      Alert.alert("Timer error", e?.message ?? "Something went wrong.");
+    }
   }
 
   return (
@@ -82,32 +103,47 @@ export function LogScreen() {
         </Pressable>
       </View>
 
+      {/* Feed / Diaper still use the modal */}
       <View style={styles.gridRow}>
         <ActionTile title="Feed" icon="🍼" onPress={() => openForm("feed")} />
         <ActionTile title="Diaper" icon="🧷" onPress={() => openForm("diaper")} />
       </View>
+
+      {/* Sleep / Tummy are now timers */}
       <View style={styles.gridRow}>
-        <ActionTile title="Sleep" icon="💤" onPress={() => openForm("sleep")} />
-        <ActionTile title="Tummy" icon="🤸" onPress={() => openForm("tummy")} />
+        <ActionTile
+          title={activeSleep ? "End Sleep" : "Start Sleep"}
+          subtitle={activeSleep ? `Started ${minutesAgo(activeSleep.startAt)}` : undefined}
+          icon="💤"
+          onPress={toggleSleep}
+          emphasized={!!activeSleep}
+        />
+        <ActionTile
+          title={activeTummy ? "End Tummy" : "Start Tummy"}
+          subtitle={activeTummy ? `Started ${minutesAgo(activeTummy.startAt)}` : undefined}
+          icon="🤸"
+          onPress={toggleTummy}
+          emphasized={!!activeTummy}
+        />
       </View>
 
       <View style={styles.card}>
         <Text style={styles.cardTitle}>Most recent</Text>
         {last ? (
           <Text style={styles.cardText}>
-            {last.type.toUpperCase()} • {new Date(last.occurredAt).toLocaleTimeString([], { hour: "numeric", minute: "2-digit" })}
+            {last.type.toUpperCase()} •{" "}
+            {new Date(last.occurredAt).toLocaleTimeString([], { hour: "numeric", minute: "2-digit" })}
+            {last.durationMin != null ? ` • ${formatDurationMin(last.durationMin)}` : ""}
           </Text>
         ) : (
           <Text style={styles.cardText}>No events yet. Log one above.</Text>
         )}
       </View>
 
+      {/* Modal only for feed/diaper now */}
       <Modal visible={active !== null} animationType="slide" transparent onRequestClose={closeForm}>
         <View style={styles.modalBackdrop}>
-          <KeyboardAvoidingView
-            behavior={Platform.OS === "ios" ? "padding" : undefined}
-            style={styles.modalSheet}
-          >
+          <KeyboardAvoidingView behavior={Platform.OS === "ios" ? "padding" : undefined} style={styles.modalSheet}>
             <View style={styles.modalHeader}>
               <Text style={styles.modalTitle}>{active ? `Log ${active}` : "Log"}</Text>
               <Pressable onPress={closeForm}>
@@ -115,9 +151,7 @@ export function LogScreen() {
               </Pressable>
             </View>
 
-            {/* Body */}
             <ScrollView contentContainerStyle={{ gap: 12, paddingBottom: 10 }}>
-              {/* Type-specific fields */}
               {active === "diaper" && (
                 <View style={{ gap: 10 }}>
                   <Text style={styles.label}>Type</Text>
@@ -148,19 +182,6 @@ export function LogScreen() {
                 </View>
               )}
 
-              {(active === "sleep" || active === "tummy") && (
-                <View style={{ gap: 8 }}>
-                  <Text style={styles.label}>Duration (minutes)</Text>
-                  <TextInput
-                    value={durationMin}
-                    onChangeText={setDurationMin}
-                    placeholder="e.g. 25"
-                    keyboardType="number-pad"
-                    style={styles.input}
-                  />
-                </View>
-              )}
-
               <View style={{ gap: 8 }}>
                 <Text style={styles.label}>Notes (optional)</Text>
                 <TextInput
@@ -183,11 +204,24 @@ export function LogScreen() {
   );
 }
 
-function ActionTile({ title, icon, onPress }: { title: string; icon: string; onPress: () => void }) {
+function ActionTile({
+  title,
+  subtitle,
+  icon,
+  onPress,
+  emphasized,
+}: {
+  title: string;
+  subtitle?: string;
+  icon: string;
+  onPress: () => void;
+  emphasized?: boolean;
+}) {
   return (
-    <Pressable style={styles.tile} onPress={onPress}>
+    <Pressable style={[styles.tile, emphasized && styles.tileActive]} onPress={onPress}>
       <Text style={styles.tileIcon}>{icon}</Text>
       <Text style={styles.tileText}>{title}</Text>
+      {!!subtitle && <Text style={styles.tileSub}>{subtitle}</Text>}
     </Pressable>
   );
 }
@@ -206,11 +240,7 @@ function ToggleRow({
       {options.map((o) => {
         const active = o.value === value;
         return (
-          <Pressable
-            key={o.value}
-            style={[styles.toggleBtn, active && styles.toggleBtnActive]}
-            onPress={() => onChange(o.value)}
-          >
+          <Pressable key={o.value} style={[styles.toggleBtn, active && styles.toggleBtnActive]} onPress={() => onChange(o.value)}>
             <Text style={[styles.toggleText, active && styles.toggleTextActive]}>{o.label}</Text>
           </Pressable>
         );
@@ -231,6 +261,7 @@ const styles = StyleSheet.create({
   ghostBtnText: { fontWeight: "700", opacity: 0.8 },
 
   gridRow: { flexDirection: "row", gap: 12 },
+
   tile: {
     flex: 1,
     borderRadius: 18,
@@ -239,10 +270,14 @@ const styles = StyleSheet.create({
     padding: 18,
     alignItems: "center",
     justifyContent: "center",
-    gap: 10,
+    gap: 6,
+  },
+  tileActive: {
+    borderColor: "#ddd",
   },
   tileIcon: { fontSize: 28 },
   tileText: { fontWeight: "800" },
+  tileSub: { fontSize: 12, opacity: 0.6, marginTop: 2, textAlign: "center" },
 
   card: { borderRadius: 18, borderWidth: 1, borderColor: "#eee", padding: 16, gap: 8 },
   cardTitle: { fontSize: 16, fontWeight: "800" },
