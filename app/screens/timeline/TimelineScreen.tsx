@@ -3,21 +3,8 @@ import React, { useMemo, useState } from "react";
 import { Pressable, ScrollView, SectionList, StyleSheet, Text, View } from "react-native";
 
 import { useEvents } from "../../data/eventsStore";
-import { emojiForType, formatTime, labelForEvent, minutesAgo } from "../../data/helpers";
-import type { BabyEvent, EventType } from "../../data/types";
-
-type TimelineSection = {
-  title: string;
-  data: BabyEvent[];
-};
-
-type FilterKey = "all" | EventType;
-
-function startOfDay(ts: number) {
-  const d = new Date(ts);
-  d.setHours(0, 0, 0, 0);
-  return d.getTime();
-}
+import { emojiForType, formatTime, labelForEvent, minutesAgo, startOfDay } from "../../data/helpers";
+import type { BabyEvent, FilterKey, TimelineSection } from "../../data/types";
 
 export function TimelineScreen() {
   const { events, clearAll } = useEvents();

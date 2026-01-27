@@ -24,3 +24,10 @@ export type EventsContextValue = {
   getLastByType: (type: EventType) => BabyEvent | undefined;
   clearAll: () => void;
 };
+
+export type TimelineSection = {
+  title: string;
+  data: BabyEvent[];
+};
+
+export type FilterKey = "all" | EventType;

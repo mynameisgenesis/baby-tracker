@@ -44,3 +44,10 @@ export function emojiForType(t: EventType) {
 export function makeId() {
   return `${Date.now()}-${Math.random().toString(16).slice(2)}`;
 }
+
+
+export function startOfDay(ts: number) {
+  const d = new Date(ts);
+  d.setHours(0, 0, 0, 0);
+  return d.getTime();
+}
