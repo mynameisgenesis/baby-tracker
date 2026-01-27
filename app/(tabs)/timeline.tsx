@@ -1,2 +1,2 @@
-import TimelineScreen from "../screens/timeline/TimelineScreen";
+import { TimelineScreen } from "../screens/timeline/TimelineScreen";
 export default TimelineScreen;
