@@ -69,8 +69,16 @@ export function HomeScreen() {
         <QuickButton title="Diaper" icon="🧷" onPress={() => quickLog("diaper")} />
       </View>
       <View style={styles.quickRow}>
-        <QuickButton title="Sleep" icon="💤" onPress={() => quickLog("sleep")} />
-        <QuickButton title="Tummy" icon="🤸" onPress={() => quickLog("tummy")} />
+        <QuickButton
+          title={activeSleep ? "End Sleep" : "Sleep"}
+          icon="💤"
+          onPress={() => (activeSleep ? endSession("sleep") : startSession("sleep"))}
+        />
+        <QuickButton
+          title={activeTummy ? "End Tummy" : "Tummy"}
+          icon="🤸"
+          onPress={() => (activeTummy ? endSession("tummy_time") : startSession("tummy_time"))}
+        />
       </View>
 
       {/* Now card */}
