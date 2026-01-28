@@ -8,7 +8,10 @@ import type { EventType } from "../../data/types";
 
 
 export function HomeScreen() {
-  const { events } = useEvents();
+  const { events, getActiveSession, startSession, endSession } = useEvents();
+
+  const activeSleep = getActiveSession("sleep");
+  const activeTummy = getActiveSession("tummy_time");
 
   // Build last-event map for stats strip
   const lastByType = useMemo(() => {
@@ -73,29 +76,48 @@ export function HomeScreen() {
       {/* Now card */}
       <Text style={styles.sectionTitle}>Right now</Text>
       <View style={styles.card}>
-        {sleepActive ? (
+        {activeSleep || activeTummy ? (
           <>
-            <Text style={styles.cardTitle}>Sleeping</Text>
-            <Text style={styles.cardText}>Started {minutesAgo(sleepActiveSince)} • Tap to end</Text>
-            <Pressable style={styles.primaryBtn} onPress={() => router.push("/log")}>
-              <Text style={styles.primaryBtnText}>End Sleep</Text>
-            </Pressable>
+            {activeSleep && (
+              <View style={{ gap: 8 }}>
+                <Text style={styles.cardTitle}>Sleeping</Text>
+                <Text style={styles.cardText}>Started {minutesAgo(activeSleep.startAt)}</Text>
+
+                <Pressable style={styles.primaryBtn} onPress={() => endSession("sleep")}>
+                  <Text style={styles.primaryBtnText}>End Sleep</Text>
+                </Pressable>
+              </View>
+            )}
+
+            {activeTummy && (
+              <View style={{ gap: 8, marginTop: activeSleep ? 12 : 0 }}>
+                <Text style={styles.cardTitle}>Tummy time</Text>
+                <Text style={styles.cardText}>Started {minutesAgo(activeTummy.startAt)}</Text>
+
+                <Pressable style={styles.primaryBtn} onPress={() => endSession("tummy_time")}>
+                  <Text style={styles.primaryBtnText}>End Tummy</Text>
+                </Pressable>
+              </View>
+            )}
           </>
         ) : (
           <>
             <Text style={styles.cardTitle}>No active timers</Text>
             <Text style={styles.cardText}>Start sleep or tummy time when it begins.</Text>
+
             <View style={{ flexDirection: "row", gap: 10 }}>
-              <Pressable style={styles.secondaryBtn} onPress={() => quickLog("sleep")}>
+              <Pressable style={styles.secondaryBtn} onPress={() => startSession("sleep")}>
                 <Text style={styles.secondaryBtnText}>Start Sleep</Text>
               </Pressable>
-              <Pressable style={styles.secondaryBtn} onPress={() => quickLog("tummy")}>
+
+              <Pressable style={styles.secondaryBtn} onPress={() => startSession("tummy_time")}>
                 <Text style={styles.secondaryBtnText}>Start Tummy</Text>
               </Pressable>
             </View>
           </>
         )}
       </View>
+
 
       {/* Mini timeline */}
       <View style={styles.sectionHeaderRow}>
