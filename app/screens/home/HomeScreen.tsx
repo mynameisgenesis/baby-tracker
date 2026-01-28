@@ -1,19 +1,27 @@
 import { router } from "expo-router";
-import React, { useMemo } from "react";
-import { Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
+import React, { useEffect, useMemo, useState } from "react";
+import { Alert, Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
 
 import { useEvents } from "../../data/eventsStore";
 import { emojiForType, formatDurationMin, formatTime, labelForEvent, minutesAgo } from "../../data/helpers";
 import type { EventType } from "../../data/types";
 
+function useNowTick(intervalMs: number = 15000) {
+  const [, setTick] = useState(0);
+  useEffect(() => {
+    const id = setInterval(() => setTick((t) => t + 1), intervalMs);
+    return () => clearInterval(id);
+  }, [intervalMs]);
+}
 
 export function HomeScreen() {
+  useNowTick(15000);
+
   const { events, getActiveSession, startSession, endSession } = useEvents();
 
   const activeSleep = getActiveSession("sleep");
   const activeTummy = getActiveSession("tummy_time");
 
-  // Build last-event map for stats strip
   const lastByType = useMemo(() => {
     const map = new Map<EventType, (typeof events)[number]>();
     for (const e of events) {
@@ -21,10 +29,6 @@ export function HomeScreen() {
     }
     return map;
   }, [events]);
-
-  // Placeholder for timer feature later:
-  const sleepActive = false;
-  const sleepActiveSince = Date.now() - 28 * 60_000;
 
   const quickLog = (type: EventType) => {
     // For now we just go to Log tab; later we can open a modal pre-selected by type.
@@ -72,12 +76,24 @@ export function HomeScreen() {
         <QuickButton
           title={activeSleep ? "End Sleep" : "Sleep"}
           icon="💤"
-          onPress={() => (activeSleep ? endSession("sleep") : startSession("sleep"))}
+          onPress={() => {
+            try {
+              activeSleep ? endSession("sleep") : startSession("sleep");
+            } catch (e: any) {
+              Alert.alert("Timer", e?.message ?? "Couldn't update sleep timer.");
+            }
+          }}
         />
         <QuickButton
-          title={activeTummy ? "End Tummy" : "Tummy"}
+          title={activeTummy ? "End Tummy Time" : "Tummy Time"}
           icon="🤸"
-          onPress={() => (activeTummy ? endSession("tummy_time") : startSession("tummy_time"))}
+          onPress={() => {
+            try {
+              activeTummy ? endSession("tummy_time") : startSession("tummy_time");
+            } catch (e: any) {
+              Alert.alert("Timer", e?.message ?? "Couldn't update tummy timer.");
+            }
+          }}
         />
       </View>
 
