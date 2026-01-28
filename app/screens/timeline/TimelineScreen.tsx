@@ -4,7 +4,14 @@ import { Pressable, ScrollView, SectionList, StyleSheet, Text, View } from "reac
 
 import { useEvents } from "../../data/eventsStore";
 import { emojiForType, formatTime, labelForEvent, minutesAgo, startOfDay } from "../../data/helpers";
-import type { BabyEvent, FilterKey, TimelineSection } from "../../data/types";
+import type { BabyEvent, EventType } from "../../data/types";
+
+export type TimelineSection = {
+  title: string;
+  data: BabyEvent[];
+};
+
+export type FilterKey = "all" | EventType;
 
 export function TimelineScreen() {
   const { events, clearAll } = useEvents();

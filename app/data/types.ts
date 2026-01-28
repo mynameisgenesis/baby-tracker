@@ -12,15 +12,6 @@ export type BabyEvent = {
   note?: string;
 };
 
-export type TimelineSection = {
-  title: string;
-  data: BabyEvent[];
-};
-
-export type FilterKey = "all" | EventType;
-
-// src/data/types.ts
-
 export type SessionType = "sleep" | "tummy_time";
 
 export type BabySession = {
