@@ -5,12 +5,19 @@ export type FeedMethod = "breast" | "bottle" | "solids";
 export type BabyEvent = {
   id: string;
   type: EventType;
-  occurredAt: number; // epoch ms
+  occurredAt: number;
+
   diaperKind?: DiaperKind;
   feedMethod?: FeedMethod;
+
   durationMin?: number;
+
+  startAt?: number;
+  endAt?: number;
+
   note?: string;
 };
+
 
 export type SessionType = "sleep" | "tummy_time";
 

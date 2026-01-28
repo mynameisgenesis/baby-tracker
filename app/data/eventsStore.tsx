@@ -11,14 +11,15 @@ import type {
 type AddEventInput =
   | { type: "diaper"; occurredAt: number; diaperKind: DiaperKind; note?: string }
   | { type: "feed"; occurredAt: number; feedMethod: FeedMethod; note?: string }
-  | { type: "sleep"; occurredAt: number; durationMin?: number; note?: string }
-  | { type: "tummy"; occurredAt: number; durationMin?: number; note?: string };
+  | { type: "sleep"; occurredAt: number; durationMin?: number; startAt?: number; endAt?: number; note?: string }
+  | { type: "tummy"; occurredAt: number; durationMin?: number; startAt?: number; endAt?: number; note?: string };
 
 type EventsContextValue = {
   events: BabyEvent[];
   sessions: BabySession[];
 
   addEvent: (input: AddEventInput) => BabyEvent;
+  updateEvent: (id: string, patch: Partial<BabyEvent>) => void;
   deleteEvent: (id: string) => void;
 
   startSession: (type: SessionType, startAt?: number, note?: string) => BabySession;
@@ -60,10 +61,21 @@ export function EventsProvider({ children }: { children: React.ReactNode }) {
       diaperKind: input.type === "diaper" ? input.diaperKind : undefined,
       feedMethod: input.type === "feed" ? input.feedMethod : undefined,
       durationMin: input.type === "sleep" || input.type === "tummy" ? input.durationMin : undefined,
+
+      startAt: input.type === "sleep" || input.type === "tummy" ? input.startAt : undefined,
+      endAt: input.type === "sleep" || input.type === "tummy" ? input.endAt : undefined,
     };
 
     setEvents((prev) => [newEvent, ...prev].sort((a, b) => b.occurredAt - a.occurredAt));
     return newEvent;
+  };
+
+  const updateEvent = (id: string, patch: Partial<BabyEvent>) => {
+    setEvents((prev) =>
+      prev
+        .map((e) => (e.id === id ? { ...e, ...patch, id: e.id } : e))
+        .sort((a, b) => b.occurredAt - a.occurredAt)
+    );
   };
 
   const deleteEvent = (id: string) => {
@@ -100,13 +112,15 @@ export function EventsProvider({ children }: { children: React.ReactNode }) {
 
     const durationMin = minutesBetween(active.startAt, safeEndAt);
 
-    // Create an event so Timeline/Home can keep using events without caring about sessions
     const createdEvent = addEvent({
       type: type === "sleep" ? "sleep" : "tummy",
-      occurredAt: active.startAt,
+      occurredAt: active.startAt,       // keep occurredAt as start for sorting
+      startAt: active.startAt,          // ✅ real start
+      endAt: safeEndAt,                 // ✅ real end
       durationMin,
       note: updated.note,
     });
+
 
     return { session: updated, createdEvent };
   };
@@ -121,6 +135,7 @@ export function EventsProvider({ children }: { children: React.ReactNode }) {
       events,
       sessions,
       addEvent,
+      updateEvent,
       deleteEvent,
       startSession,
       endSession,
