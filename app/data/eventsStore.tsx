@@ -19,6 +19,7 @@ type EventsContextValue = {
   sessions: BabySession[];
 
   addEvent: (input: AddEventInput) => BabyEvent;
+  deleteEvent: (id: string) => void;
 
   startSession: (type: SessionType, startAt?: number, note?: string) => BabySession;
   endSession: (
@@ -63,6 +64,10 @@ export function EventsProvider({ children }: { children: React.ReactNode }) {
 
     setEvents((prev) => [newEvent, ...prev].sort((a, b) => b.occurredAt - a.occurredAt));
     return newEvent;
+  };
+
+  const deleteEvent = (id: string) => {
+    setEvents((prev) => prev.filter((e) => e.id !== id));
   };
 
   const getActiveSession = (type: SessionType): BabySession | undefined => {
@@ -116,6 +121,7 @@ export function EventsProvider({ children }: { children: React.ReactNode }) {
       events,
       sessions,
       addEvent,
+      deleteEvent,
       startSession,
       endSession,
       getActiveSession,

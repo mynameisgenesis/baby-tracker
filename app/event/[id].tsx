@@ -1,2 +1,2 @@
-import EventDetailScreen from "../screens/event/EventDetailScreen";
-export default EventDetailScreen;
+import { EventDetailsScreen } from "../screens/event/EventDetailsScreen";
+export default EventDetailsScreen;
