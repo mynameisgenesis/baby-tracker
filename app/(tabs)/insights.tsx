@@ -1,2 +1,2 @@
-import InsightsScreen from "../screens/insights/InsightsScreen";
+import { InsightsScreen } from "../screens/insights/InsightsScreen";
 export default InsightsScreen;
