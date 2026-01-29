@@ -15,8 +15,5 @@ export default function TableLayout() {
     <Tabs.Screen name="insights" options={{ title: 'Insights', tabBarIcon: ({color, focused}) => (
       <IonIcon name={focused ? 'clipboard' : 'clipboard-outline'} size={24} color={color} />
     ) }} /> 
-    <Tabs.Screen name="tips" options={{ title: 'Tips', tabBarIcon: ({color, focused}) => (
-      <IonIcon name={focused ? 'time' : 'time-outline'} size={24} color={color} />
-    ) }} /> 
   </Tabs>;
 }

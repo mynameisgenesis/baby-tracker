@@ -171,18 +171,6 @@ export function HomeScreen() {
         )}
       </View>
 
-      {/* Tip card */}
-      <Text style={styles.sectionTitle}>Tip</Text>
-      <View style={styles.card}>
-        <Text style={styles.cardTitle}>Tummy time micro-sessions</Text>
-        <Text style={styles.cardText}>
-          Short bursts count. Try 2–3 minutes after a diaper change when baby is calm. Stack wins.
-        </Text>
-        <Pressable style={styles.secondaryBtn} onPress={() => router.push("/tips")}>
-          <Text style={styles.secondaryBtnText}>More tips</Text>
-        </Pressable>
-      </View>
-
       <View style={{ height: 24 }} />
     </ScrollView>
   );
