@@ -1,6 +1,8 @@
 import { EventType } from "@/app/data/types";
-import React, { useState } from "react";
-import { Pressable, StyleSheet, Text } from "react-native";
+import * as Haptics from "expo-haptics";
+import { LinearGradient } from "expo-linear-gradient";
+import React, { useRef, useState } from "react";
+import { Animated, Pressable, StyleSheet, Text, ViewStyle } from "react-native";
 import EventIcon from "../events/EventIcon";
 
 export default function QuickButton({
@@ -14,63 +16,114 @@ export default function QuickButton({
 }) {
   const [pressed, setPressed] = useState(false);
 
+  const translateY = useRef(new Animated.Value(0)).current;
+  const scale = useRef(new Animated.Value(1)).current;
+
+  const pressIn = async () => {
+    setPressed(true);
+    // tiny “click” feedback
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => {});
+    Animated.parallel([
+      Animated.spring(translateY, {
+        toValue: 3,
+        useNativeDriver: true,
+        speed: 30,
+        bounciness: 0,
+      }),
+      Animated.spring(scale, {
+        toValue: 0.985,
+        useNativeDriver: true,
+        speed: 30,
+        bounciness: 0,
+      }),
+    ]).start();
+  };
+
+  const pressOut = () => {
+    setPressed(false);
+    Animated.parallel([
+      Animated.spring(translateY, {
+        toValue: 0,
+        useNativeDriver: true,
+        speed: 22,
+        bounciness: 6,
+      }),
+      Animated.spring(scale, {
+        toValue: 1,
+        useNativeDriver: true,
+        speed: 22,
+        bounciness: 6,
+      }),
+    ]).start();
+  };
+
   return (
     <Pressable
       onPress={onPress}
-      onPressIn={() => setPressed(true)}
-      onPressOut={() => setPressed(false)}
-      style={[
-        styles.quickBtn,
-        pressed && styles.quickBtnPressed,
+      onPressIn={pressIn}
+      onPressOut={pressOut}
+      style={({ pressed: p }) => [
+        styles.quickBtnOuter,
+        (pressed || p) && styles.quickBtnOuterPressed,
       ]}
     >
-      <Text style={styles.quickIcon}>
-        <EventIcon type={icon} />
-      </Text>
-      <Text style={styles.quickText}>{title}</Text>
+      <Animated.View
+        style={
+          [
+            styles.quickBtnInner,
+            { transform: [{ translateY }, { scale }] },
+          ] as unknown as ViewStyle
+        }
+      >
+        <LinearGradient
+          colors={pressed ? ["#F4F5F7", "#FFFFFF"] : ["#FFFFFF", "#F6F7FA"]}
+          start={{ x: 0, y: 0 }}
+          end={{ x: 0, y: 1 }}
+          style={styles.quickBtnGradient}
+        >
+          <Text style={styles.quickIcon}>
+            <EventIcon type={icon} />
+          </Text>
+          <Text style={styles.quickText}>{title}</Text>
+        </LinearGradient>
+      </Animated.View>
     </Pressable>
   );
 }
 
 const styles = StyleSheet.create({
-  quickBtn: {
+  quickBtnOuter: {
     flex: 1,
+    borderRadius: 18,
+  },
+
+  // “Raised” shadow lives on the OUTER wrapper
+  quickBtnInner: {
     borderRadius: 18,
     borderWidth: 1,
     borderColor: "#eee",
+    overflow: "hidden",
+
+    // iOS shadow
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 8 },
+    shadowOpacity: 0.14,
+    shadowRadius: 10,
+
+    // Android shadow
+    elevation: 8,
+  },
+
+  // Optional: slightly reduce outer hitbox “pop” look while pressed
+  quickBtnOuterPressed: {},
+
+  quickBtnGradient: {
     padding: 16,
     alignItems: "center",
     justifyContent: "center",
     gap: 8,
-
-    backgroundColor: "#fff",
-
-    // iOS shadow
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 6 },
-    shadowOpacity: 0.15,
-    shadowRadius: 8,
-
-    // Android shadow
-    elevation: 6,
   },
 
-  quickBtnPressed: {
-    transform: [{ translateY: 3 }],
-
-    // reduce shadow when pressed
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 2,
-  },
-
-  quickIcon: {
-    fontSize: 26,
-  },
-
-  quickText: {
-    fontSize: 14,
-    fontWeight: "700",
-  },
+  quickIcon: { fontSize: 26 },
+  quickText: { fontSize: 14, fontWeight: "700" },
 });
