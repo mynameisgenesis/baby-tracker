@@ -11,6 +11,7 @@ import {
   TextInput,
   View,
 } from "react-native";
+import ActionTile from "../../components/events/ActionTile";
 import { useEvents } from "../../data/eventsStore";
 import { formatDurationMin, minutesAgo } from "../../data/helpers";
 import type { DiaperKind, EventType, FeedMethod } from "../../data/types";
@@ -105,8 +106,8 @@ export function LogScreen() {
 
       {/* Feed / Diaper still use the modal */}
       <View style={styles.gridRow}>
-        <ActionTile title="Feed" icon="🍼" onPress={() => openForm("feed")} />
-        <ActionTile title="Diaper" icon="🧷" onPress={() => openForm("diaper")} />
+        <ActionTile title="Feed" icon="feed" onPress={() => openForm("feed")} />
+        <ActionTile title="Diaper" icon="diaper" onPress={() => openForm("diaper")} />
       </View>
 
       {/* Sleep / Tummy are now timers */}
@@ -114,14 +115,14 @@ export function LogScreen() {
         <ActionTile
           title={activeSleep ? "End Sleep" : "Start Sleep"}
           subtitle={activeSleep ? `Started ${minutesAgo(activeSleep.startAt)}` : undefined}
-          icon="💤"
+          icon="sleep"
           onPress={toggleSleep}
           emphasized={!!activeSleep}
         />
         <ActionTile
           title={activeTummy ? "End Tummy" : "Start Tummy"}
           subtitle={activeTummy ? `Started ${minutesAgo(activeTummy.startAt)}` : undefined}
-          icon="🤸"
+          icon="tummy"
           onPress={toggleTummy}
           emphasized={!!activeTummy}
         />
@@ -204,28 +205,6 @@ export function LogScreen() {
   );
 }
 
-function ActionTile({
-  title,
-  subtitle,
-  icon,
-  onPress,
-  emphasized,
-}: {
-  title: string;
-  subtitle?: string;
-  icon: string;
-  onPress: () => void;
-  emphasized?: boolean;
-}) {
-  return (
-    <Pressable style={[styles.tile, emphasized && styles.tileActive]} onPress={onPress}>
-      <Text style={styles.tileIcon}>{icon}</Text>
-      <Text style={styles.tileText}>{title}</Text>
-      {!!subtitle && <Text style={styles.tileSub}>{subtitle}</Text>}
-    </Pressable>
-  );
-}
-
 function ToggleRow({
   options,
   value,
@@ -261,23 +240,6 @@ const styles = StyleSheet.create({
   ghostBtnText: { fontWeight: "700", opacity: 0.8 },
 
   gridRow: { flexDirection: "row", gap: 12 },
-
-  tile: {
-    flex: 1,
-    borderRadius: 18,
-    borderWidth: 1,
-    borderColor: "#eee",
-    padding: 18,
-    alignItems: "center",
-    justifyContent: "center",
-    gap: 6,
-  },
-  tileActive: {
-    borderColor: "#ddd",
-  },
-  tileIcon: { fontSize: 28 },
-  tileText: { fontWeight: "800" },
-  tileSub: { fontSize: 12, opacity: 0.6, marginTop: 2, textAlign: "center" },
 
   card: { borderRadius: 18, borderWidth: 1, borderColor: "#eee", padding: 16, gap: 8 },
   cardTitle: { fontSize: 16, fontWeight: "800" },
