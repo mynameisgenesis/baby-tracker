@@ -2,8 +2,10 @@ import { router } from "expo-router";
 import React, { useEffect, useMemo, useState } from "react";
 import { Alert, Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
 
+import EventIcon from "@/app/components/events/EventIcon";
+import QuickButton from "../../components/events/QuickButton";
 import { useEvents } from "../../data/eventsStore";
-import { emojiForType, formatDurationMin, formatTime, labelForEvent, minutesAgo } from "../../data/helpers";
+import { formatDurationMin, formatTime, labelForEvent, minutesAgo } from "../../data/helpers";
 import type { EventType } from "../../data/types";
 
 function useNowTick(intervalMs: number = 15000) {
@@ -69,13 +71,13 @@ export function HomeScreen() {
       {/* Quick log */}
       <Text style={styles.sectionTitle}>Quick Log</Text>
       <View style={styles.quickRow}>
-        <QuickButton title="Feed" icon="🍼" onPress={() => quickLog("feed")} />
-        <QuickButton title="Diaper" icon="🧷" onPress={() => quickLog("diaper")} />
+        <QuickButton title="Feed" icon="feed" onPress={() => quickLog("feed")} />
+        <QuickButton title="Diaper" icon="diaper" onPress={() => quickLog("diaper")} />
       </View>
       <View style={styles.quickRow}>
         <QuickButton
           title={activeSleep ? "End Sleep" : "Sleep"}
-          icon="💤"
+          icon="sleep"
           onPress={() => {
             try {
               activeSleep ? endSession("sleep") : startSession("sleep");
@@ -86,7 +88,7 @@ export function HomeScreen() {
         />
         <QuickButton
           title={activeTummy ? "End Tummy Time" : "Tummy Time"}
-          icon="🤸"
+          icon="tummy"
           onPress={() => {
             try {
               activeTummy ? endSession("tummy_time") : startSession("tummy_time");
@@ -157,7 +159,7 @@ export function HomeScreen() {
         ) : (
           events.slice(0, 6).map((e) => (
             <Pressable key={e.id} style={styles.eventRow} onPress={() => router.push(`/event/${e.id}`)}>
-              <Text style={styles.eventIcon}>{emojiForType(e.type)}</Text>
+              <EventIcon type={e.type} size={22} />
               <View style={{ flex: 1 }}>
                 <Text style={styles.eventTitle}>{labelForEvent(e)}</Text>
                 <Text style={styles.eventMeta}>
@@ -185,15 +187,6 @@ function StatPill({ label, value }: { label: string; value: string }) {
   );
 }
 
-function QuickButton({ title, icon, onPress }: { title: string; icon: string; onPress: () => void }) {
-  return (
-    <Pressable style={styles.quickBtn} onPress={onPress}>
-      <Text style={styles.quickIcon}>{icon}</Text>
-      <Text style={styles.quickText}>{title}</Text>
-    </Pressable>
-  );
-}
-
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: "#fff" },
   content: { padding: 16, gap: 12 },
@@ -216,18 +209,6 @@ const styles = StyleSheet.create({
   link: { fontWeight: "600", opacity: 0.7 },
 
   quickRow: { flexDirection: "row", gap: 12 },
-  quickBtn: {
-    flex: 1,
-    borderRadius: 18,
-    borderWidth: 1,
-    borderColor: "#eee",
-    padding: 16,
-    alignItems: "center",
-    justifyContent: "center",
-    gap: 8,
-  },
-  quickIcon: { fontSize: 26 },
-  quickText: { fontSize: 14, fontWeight: "700" },
 
   card: { borderRadius: 18, borderWidth: 1, borderColor: "#eee", padding: 16, gap: 10 },
   cardTitle: { fontSize: 16, fontWeight: "800" },

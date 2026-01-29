@@ -28,19 +28,6 @@ export function labelForEvent(e: BabyEvent) {
   }
 }
 
-export function emojiForType(t: EventType) {
-  switch (t) {
-    case "diaper":
-      return "🧷";
-    case "feed":
-      return "🍼";
-    case "sleep":
-      return "💤";
-    case "tummy":
-      return "🤸";
-  }
-}
-
 export function makeId() {
   return `${Date.now()}-${Math.random().toString(16).slice(2)}`;
 }

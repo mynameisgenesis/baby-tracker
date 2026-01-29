@@ -2,8 +2,9 @@ import { router, useLocalSearchParams } from "expo-router";
 import React, { useMemo, useState } from "react";
 import { Alert, Pressable, ScrollView, StyleSheet, Text, TextInput, View } from "react-native";
 
+import { EventIcon } from "@/app/components/events/EventIcon";
 import { useEvents } from "../../data/eventsStore";
-import { emojiForType, formatDurationMin, formatTime, labelForEvent, minutesAgo } from "../../data/helpers";
+import { formatDurationMin, formatTime, labelForEvent, minutesAgo } from "../../data/helpers";
 import type { BabyEvent, DiaperKind, FeedMethod } from "../../data/types";
 
 export function EventDetailsScreen() {
@@ -98,7 +99,7 @@ export function EventDetailsScreen() {
     <ScrollView style={styles.container} contentContainerStyle={styles.content}>
       {/* Header */}
       <View style={styles.headerCard}>
-        <Text style={styles.bigIcon}>{emojiForType(event.type)}</Text>
+        <EventIcon type={event.type} size={56} />
         <Text style={styles.headerTitle}>{labelForEvent(event)}</Text>
         <Text style={styles.headerMeta}>
           {formatTime(event.occurredAt)} • {minutesAgo(event.occurredAt)}

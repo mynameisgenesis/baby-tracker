@@ -2,8 +2,9 @@ import { router } from "expo-router";
 import React, { useMemo, useState } from "react";
 import { Pressable, ScrollView, SectionList, StyleSheet, Text, View } from "react-native";
 
+import { EventIcon } from "@/app/components/events/EventIcon";
 import { useEvents } from "../../data/eventsStore";
-import { emojiForType, formatTime, labelForEvent, minutesAgo, startOfDay } from "../../data/helpers";
+import { formatTime, labelForEvent, minutesAgo, startOfDay } from "../../data/helpers";
 import type { BabyEvent, EventType } from "../../data/types";
 
 export type TimelineSection = {
@@ -148,7 +149,7 @@ export function TimelineScreen() {
           )}
           renderItem={({ item }) => (
             <Pressable style={styles.row} onPress={() => router.push(`/event/${item.id}`)}>
-              <Text style={styles.icon}>{emojiForType(item.type)}</Text>
+              <EventIcon type={item.type} size={20} />
 
               <View style={styles.rowBody}>
                 <Text style={styles.rowTitle}>{labelForEvent(item)}</Text>
