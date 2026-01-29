@@ -11,10 +11,10 @@ import {
   TextInput,
   View,
 } from "react-native";
-import ActionTile from "../../components/events/ActionTile";
 import { useEvents } from "../../data/eventsStore";
 import { formatDurationMin, minutesAgo } from "../../data/helpers";
 import type { DiaperKind, EventType, FeedMethod } from "../../data/types";
+import ActionTile from "../../components/events/ActionTile";
 
 type ActiveForm = null | Extract<EventType, "feed" | "diaper">;
 
