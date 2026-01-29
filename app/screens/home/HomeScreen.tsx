@@ -3,7 +3,7 @@ import React, { useEffect, useMemo, useState } from "react";
 import { Alert, Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
 
 import EventIcon from "@/app/components/events/EventIcon";
-import QuickButton from "../../components/events/QuickButton";
+import QuickButton from "../../components/buttons/QuickButton";
 import { useEvents } from "../../data/eventsStore";
 import { formatDurationMin, formatTime, labelForEvent, minutesAgo } from "../../data/helpers";
 import type { EventType } from "../../data/types";
@@ -72,7 +72,10 @@ export function HomeScreen() {
       <Text style={styles.sectionTitle}>Quick Log</Text>
       <View style={styles.quickRow}>
         <QuickButton title="Feed" icon="feed" onPress={() => quickLog("feed")} />
+        
         <QuickButton title="Diaper" icon="diaper" onPress={() => quickLog("diaper")} />
+          {/* <ActionButton title="Feed" icon="feed" onPress={() => openForm("feed")} />
+          <ActionButton title="Diaper" icon="diaper" onPress={() => openForm("diaper")} /> */}
       </View>
       <View style={styles.quickRow}>
         <QuickButton

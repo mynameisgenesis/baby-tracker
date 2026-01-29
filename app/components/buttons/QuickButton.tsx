@@ -1,20 +1,16 @@
 import { EventType } from "@/app/data/types";
 import React, { useState } from "react";
 import { Pressable, StyleSheet, Text } from "react-native";
-import EventIcon from "./EventIcon";
+import EventIcon from "../events/EventIcon";
 
-export default function ActionTile({
+export default function QuickButton({
   title,
-  subtitle,
   icon,
   onPress,
-  emphasized,
 }: {
   title: string;
-  subtitle?: string;
   icon: EventType;
   onPress: () => void;
-  emphasized?: boolean;
 }) {
   const [pressed, setPressed] = useState(false);
 
@@ -24,75 +20,57 @@ export default function ActionTile({
       onPressIn={() => setPressed(true)}
       onPressOut={() => setPressed(false)}
       style={[
-        styles.tile,
-        emphasized && styles.tileActive,
-        pressed && styles.tilePressed,
+        styles.quickBtn,
+        pressed && styles.quickBtnPressed,
       ]}
     >
-      <Text style={styles.tileIcon}>
+      <Text style={styles.quickIcon}>
         <EventIcon type={icon} />
       </Text>
-      <Text style={styles.tileText}>{title}</Text>
-      {!!subtitle && <Text style={styles.tileSub}>{subtitle}</Text>}
+      <Text style={styles.quickText}>{title}</Text>
     </Pressable>
   );
 }
 
 const styles = StyleSheet.create({
-  tile: {
+  quickBtn: {
     flex: 1,
     borderRadius: 18,
     borderWidth: 1,
     borderColor: "#eee",
-    padding: 18,
+    padding: 16,
     alignItems: "center",
     justifyContent: "center",
-    gap: 6,
+    gap: 8,
 
     backgroundColor: "#fff",
 
-    // iOS shadow (raised)
+    // iOS shadow
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 6 },
-    shadowOpacity: 0.14,
+    shadowOpacity: 0.15,
     shadowRadius: 8,
 
     // Android shadow
     elevation: 6,
   },
 
-  tileActive: {
-    borderColor: "#ddd",
-
-    // slightly stronger lift when emphasized
-    shadowOffset: { width: 0, height: 8 },
-    shadowOpacity: 0.18,
-    shadowRadius: 10,
-    elevation: 8,
-  },
-
-  tilePressed: {
+  quickBtnPressed: {
     transform: [{ translateY: 3 }],
 
-    // shadow collapses when pressed
+    // reduce shadow when pressed
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 4,
     elevation: 2,
   },
 
-  tileIcon: {
-    fontSize: 28,
+  quickIcon: {
+    fontSize: 26,
   },
 
-  tileText: {
-    fontWeight: "800",
-  },
-
-  tileSub: {
-    fontSize: 12,
-    opacity: 0.6,
-    marginTop: 2,
-    textAlign: "center",
+  quickText: {
+    fontSize: 14,
+    fontWeight: "700",
   },
 });

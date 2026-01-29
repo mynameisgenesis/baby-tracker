@@ -1,10 +1,23 @@
 import { router, useLocalSearchParams } from "expo-router";
 import React, { useMemo, useState } from "react";
-import { Alert, Pressable, ScrollView, StyleSheet, Text, TextInput, View } from "react-native";
+import {
+  Alert,
+  Pressable,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TextInput,
+  View,
+} from "react-native";
 
-import { EventIcon } from "@/app/components/events/EventIcon";
+import EventIcon from "@/app/components/events/EventIcon";
 import { useEvents } from "../../data/eventsStore";
-import { formatDurationMin, formatTime, labelForEvent, minutesAgo } from "../../data/helpers";
+import {
+  formatDurationMin,
+  formatTime,
+  labelForEvent,
+  minutesAgo,
+} from "../../data/helpers";
 import type { BabyEvent, DiaperKind, FeedMethod } from "../../data/types";
 
 export function EventDetailsScreen() {
@@ -28,7 +41,9 @@ export function EventDetailsScreen() {
     setNoteDraft(event.note ?? "");
     setDiaperKindDraft(event.diaperKind ?? "pee");
     setFeedMethodDraft(event.feedMethod ?? "bottle");
-    setDurationDraft(event.durationMin != null ? String(event.durationMin) : "");
+    setDurationDraft(
+      event.durationMin != null ? String(event.durationMin) : "",
+    );
     setIsEditing(true);
   };
 
@@ -53,7 +68,9 @@ export function EventDetailsScreen() {
 
     if (event.type === "sleep" || event.type === "tummy") {
       const n = durationDraft.trim() === "" ? undefined : Number(durationDraft);
-      patch.durationMin = Number.isFinite(n as number) ? (n as number) : undefined;
+      patch.durationMin = Number.isFinite(n as number)
+        ? (n as number)
+        : undefined;
     }
 
     updateEvent(event.id, patch);
@@ -103,7 +120,9 @@ export function EventDetailsScreen() {
         <Text style={styles.headerTitle}>{labelForEvent(event)}</Text>
         <Text style={styles.headerMeta}>
           {formatTime(event.occurredAt)} • {minutesAgo(event.occurredAt)}
-          {event.durationMin != null ? ` • ${formatDurationMin(event.durationMin)}` : ""}
+          {event.durationMin != null
+            ? ` • ${formatDurationMin(event.durationMin)}`
+            : ""}
         </Text>
 
         {!isEditing ? (
@@ -124,7 +143,9 @@ export function EventDetailsScreen() {
 
       {/* Details / Edit Form */}
       <View style={styles.card}>
-        <Text style={styles.cardTitle}>{isEditing ? "Edit details" : "Details"}</Text>
+        <Text style={styles.cardTitle}>
+          {isEditing ? "Edit details" : "Details"}
+        </Text>
 
         {/* <Row label="Type" value={event.type} /> */}
 
@@ -176,7 +197,9 @@ export function EventDetailsScreen() {
 
             <Text style={styles.label}>End</Text>
             <Text style={styles.readValue}>
-              {event.endAt != null ? new Date(event.endAt).toLocaleString() : "—"}
+              {event.endAt != null
+                ? new Date(event.endAt).toLocaleString()
+                : "—"}
             </Text>
 
             {/* Duration */}
@@ -191,7 +214,9 @@ export function EventDetailsScreen() {
               />
             ) : (
               <Text style={styles.readValue}>
-                {event.durationMin != null ? formatDurationMin(event.durationMin) : "—"}
+                {event.durationMin != null
+                  ? formatDurationMin(event.durationMin)
+                  : "—"}
               </Text>
             )}
           </>
@@ -207,7 +232,9 @@ export function EventDetailsScreen() {
             multiline
           />
         ) : (
-          <Text style={styles.readValue}>{event.note?.trim() ? event.note : "—"}</Text>
+          <Text style={styles.readValue}>
+            {event.note?.trim() ? event.note : "—"}
+          </Text>
         )}
       </View>
 
@@ -250,7 +277,11 @@ function ToggleRow({
             style={[styles.toggleBtn, active && styles.toggleBtnActive]}
             onPress={() => onChange(o.value)}
           >
-            <Text style={[styles.toggleText, active && styles.toggleTextActive]}>{o.label}</Text>
+            <Text
+              style={[styles.toggleText, active && styles.toggleTextActive]}
+            >
+              {o.label}
+            </Text>
           </Pressable>
         );
       })}
@@ -262,7 +293,13 @@ const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: "#fff" },
   content: { padding: 16, gap: 12 },
 
-  center: { flex: 1, alignItems: "center", justifyContent: "center", padding: 16, gap: 12 },
+  center: {
+    flex: 1,
+    alignItems: "center",
+    justifyContent: "center",
+    padding: 16,
+    gap: 12,
+  },
   title: { fontSize: 18, fontWeight: "800" },
 
   headerCard: {
@@ -277,7 +314,13 @@ const styles = StyleSheet.create({
   headerTitle: { fontSize: 18, fontWeight: "900", textAlign: "center" },
   headerMeta: { opacity: 0.65, textAlign: "center" },
 
-  card: { borderRadius: 18, borderWidth: 1, borderColor: "#eee", padding: 16, gap: 10 },
+  card: {
+    borderRadius: 18,
+    borderWidth: 1,
+    borderColor: "#eee",
+    padding: 16,
+    gap: 10,
+  },
   cardTitle: { fontSize: 16, fontWeight: "900" },
 
   row: { flexDirection: "row", justifyContent: "space-between", gap: 12 },
@@ -296,12 +339,24 @@ const styles = StyleSheet.create({
   },
 
   toggleRow: { flexDirection: "row", gap: 10, flexWrap: "wrap" },
-  toggleBtn: { borderWidth: 1, borderColor: "#eee", borderRadius: 999, paddingHorizontal: 14, paddingVertical: 10 },
+  toggleBtn: {
+    borderWidth: 1,
+    borderColor: "#eee",
+    borderRadius: 999,
+    paddingHorizontal: 14,
+    paddingVertical: 10,
+  },
   toggleBtnActive: { borderColor: "#ddd" },
   toggleText: { fontWeight: "800", opacity: 0.75 },
   toggleTextActive: { opacity: 1 },
 
-  dangerCard: { borderRadius: 18, borderWidth: 1, borderColor: "#f2d3d3", padding: 16, gap: 10 },
+  dangerCard: {
+    borderRadius: 18,
+    borderWidth: 1,
+    borderColor: "#f2d3d3",
+    padding: 16,
+    gap: 10,
+  },
   dangerTitle: { fontSize: 14, fontWeight: "900", opacity: 0.7 },
 
   deleteBtn: {
