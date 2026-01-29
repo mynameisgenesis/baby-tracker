@@ -1,11 +1,18 @@
 import { router } from "expo-router";
 import React, { useEffect, useMemo, useState } from "react";
-import { Alert, Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
+import {
+  Alert,
+  Pressable,
+  ScrollView,
+  StyleSheet,
+  Text,
+  View,
+} from "react-native";
 
-import EventIcon from "@/app/components/events/EventIcon";
+import RecentEvents from "@/app/components/sections/RecentEvents";
 import QuickButton from "../../components/buttons/QuickButton";
 import { useEvents } from "../../data/eventsStore";
-import { formatDurationMin, formatTime, labelForEvent, minutesAgo } from "../../data/helpers";
+import { minutesAgo } from "../../data/helpers";
 import type { EventType } from "../../data/types";
 
 function useNowTick(intervalMs: number = 15000) {
@@ -46,35 +53,65 @@ export function HomeScreen() {
           <Text style={styles.subTitle}>Baby Tracker</Text>
         </View>
 
-        <Pressable style={styles.headerBtn} onPress={() => router.push("/timeline")}>
+        <Pressable
+          style={styles.headerBtn}
+          onPress={() => router.push("/timeline")}
+        >
           <Text style={styles.headerBtnText}>Timeline</Text>
         </Pressable>
       </View>
 
       {/* Stats strip */}
       <View style={styles.statsRow}>
-        <StatPill label="Feed" value={lastByType.get("feed") ? minutesAgo(lastByType.get("feed")!.occurredAt) : "—"} />
+        <StatPill
+          label="Feed"
+          value={
+            lastByType.get("feed")
+              ? minutesAgo(lastByType.get("feed")!.occurredAt)
+              : "—"
+          }
+        />
         <StatPill
           label="Diaper"
-          value={lastByType.get("diaper") ? minutesAgo(lastByType.get("diaper")!.occurredAt) : "—"}
+          value={
+            lastByType.get("diaper")
+              ? minutesAgo(lastByType.get("diaper")!.occurredAt)
+              : "—"
+          }
         />
         <StatPill
           label="Sleep"
-          value={lastByType.get("sleep") ? minutesAgo(lastByType.get("sleep")!.occurredAt) : "—"}
+          value={
+            lastByType.get("sleep")
+              ? minutesAgo(lastByType.get("sleep")!.occurredAt)
+              : "—"
+          }
         />
         <StatPill
           label="Tummy"
-          value={lastByType.get("tummy") ? minutesAgo(lastByType.get("tummy")!.occurredAt) : "—"}
+          value={
+            lastByType.get("tummy")
+              ? minutesAgo(lastByType.get("tummy")!.occurredAt)
+              : "—"
+          }
         />
       </View>
 
       {/* Quick log */}
       <Text style={styles.sectionTitle}>Quick Log</Text>
       <View style={styles.quickRow}>
-        <QuickButton title="Feed" icon="feed" onPress={() => quickLog("feed")} />
-        
-        <QuickButton title="Diaper" icon="diaper" onPress={() => quickLog("diaper")} />
-          {/* <ActionButton title="Feed" icon="feed" onPress={() => openForm("feed")} />
+        <QuickButton
+          title="Feed"
+          icon="feed"
+          onPress={() => quickLog("feed")}
+        />
+
+        <QuickButton
+          title="Diaper"
+          icon="diaper"
+          onPress={() => quickLog("diaper")}
+        />
+        {/* <ActionButton title="Feed" icon="feed" onPress={() => openForm("feed")} />
           <ActionButton title="Diaper" icon="diaper" onPress={() => openForm("diaper")} /> */}
       </View>
       <View style={styles.quickRow}>
@@ -85,7 +122,10 @@ export function HomeScreen() {
             try {
               activeSleep ? endSession("sleep") : startSession("sleep");
             } catch (e: any) {
-              Alert.alert("Timer", e?.message ?? "Couldn't update sleep timer.");
+              Alert.alert(
+                "Timer",
+                e?.message ?? "Couldn't update sleep timer.",
+              );
             }
           }}
         />
@@ -94,59 +134,18 @@ export function HomeScreen() {
           icon="tummy"
           onPress={() => {
             try {
-              activeTummy ? endSession("tummy_time") : startSession("tummy_time");
+              activeTummy
+                ? endSession("tummy_time")
+                : startSession("tummy_time");
             } catch (e: any) {
-              Alert.alert("Timer", e?.message ?? "Couldn't update tummy timer.");
+              Alert.alert(
+                "Timer",
+                e?.message ?? "Couldn't update tummy timer.",
+              );
             }
           }}
         />
       </View>
-
-      {/* Now card */}
-      <Text style={styles.sectionTitle}>Right now</Text>
-      <View style={styles.card}>
-        {activeSleep || activeTummy ? (
-          <>
-            {activeSleep && (
-              <View style={{ gap: 8 }}>
-                <Text style={styles.cardTitle}>Sleeping</Text>
-                <Text style={styles.cardText}>Started {minutesAgo(activeSleep.startAt)}</Text>
-
-                <Pressable style={styles.primaryBtn} onPress={() => endSession("sleep")}>
-                  <Text style={styles.primaryBtnText}>End Sleep</Text>
-                </Pressable>
-              </View>
-            )}
-
-            {activeTummy && (
-              <View style={{ gap: 8, marginTop: activeSleep ? 12 : 0 }}>
-                <Text style={styles.cardTitle}>Tummy time</Text>
-                <Text style={styles.cardText}>Started {minutesAgo(activeTummy.startAt)}</Text>
-
-                <Pressable style={styles.primaryBtn} onPress={() => endSession("tummy_time")}>
-                  <Text style={styles.primaryBtnText}>End Tummy</Text>
-                </Pressable>
-              </View>
-            )}
-          </>
-        ) : (
-          <>
-            <Text style={styles.cardTitle}>No active timers</Text>
-            <Text style={styles.cardText}>Start sleep or tummy time when it begins.</Text>
-
-            <View style={{ flexDirection: "row", gap: 10 }}>
-              <Pressable style={styles.secondaryBtn} onPress={() => startSession("sleep")}>
-                <Text style={styles.secondaryBtnText}>Start Sleep</Text>
-              </Pressable>
-
-              <Pressable style={styles.secondaryBtn} onPress={() => startSession("tummy_time")}>
-                <Text style={styles.secondaryBtnText}>Start Tummy</Text>
-              </Pressable>
-            </View>
-          </>
-        )}
-      </View>
-
 
       {/* Mini timeline */}
       <View style={styles.sectionHeaderRow}>
@@ -155,26 +154,8 @@ export function HomeScreen() {
           <Text style={styles.link}>See all</Text>
         </Pressable>
       </View>
-
-      <View style={styles.card}>
-        {events.length === 0 ? (
-          <Text style={styles.cardText}>No events yet. Tap a Quick Log button above.</Text>
-        ) : (
-          events.slice(0, 6).map((e) => (
-            <Pressable key={e.id} style={styles.eventRow} onPress={() => router.push(`/event/${e.id}`)}>
-              <EventIcon type={e.type} size={22} />
-              <View style={{ flex: 1 }}>
-                <Text style={styles.eventTitle}>{labelForEvent(e)}</Text>
-                <Text style={styles.eventMeta}>
-                  {formatTime(e.occurredAt)} • {minutesAgo(e.occurredAt)}
-                  {e.durationMin != null ? ` • ${formatDurationMin(e.durationMin)}` : ""}
-                </Text>
-              </View>
-              <Text style={styles.chev}>›</Text>
-            </Pressable>
-          ))
-        )}
-      </View>
+      {/* Now card */}
+      <RecentEvents />
 
       <View style={{ height: 24 }} />
     </ScrollView>
@@ -194,38 +175,61 @@ const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: "#fff" },
   content: { padding: 16, gap: 12 },
 
-  header: { flexDirection: "row", alignItems: "center", justifyContent: "space-between", marginBottom: 6 },
+  header: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    marginBottom: 6,
+  },
   title: { fontSize: 28, fontWeight: "700" },
   subTitle: { fontSize: 13, opacity: 0.6 },
 
-  headerBtn: { paddingHorizontal: 12, paddingVertical: 10, borderRadius: 12, borderWidth: 1, borderColor: "#ddd" },
+  headerBtn: {
+    paddingHorizontal: 12,
+    paddingVertical: 10,
+    borderRadius: 12,
+    borderWidth: 1,
+    borderColor: "#ddd",
+  },
   headerBtnText: { fontWeight: "600" },
 
   statsRow: { flexDirection: "row", gap: 10, flexWrap: "wrap" },
 
-  pill: { padding: 12, borderRadius: 16, borderWidth: 1, borderColor: "#eee", minWidth: 150 },
+  pill: {
+    padding: 12,
+    borderRadius: 16,
+    borderWidth: 1,
+    borderColor: "#eee",
+    minWidth: 150,
+  },
   pillLabel: { fontSize: 12, opacity: 0.6, marginBottom: 4 },
   pillValue: { fontSize: 16, fontWeight: "700" },
 
   sectionTitle: { fontSize: 16, fontWeight: "700", marginTop: 6 },
-  sectionHeaderRow: { flexDirection: "row", justifyContent: "space-between", alignItems: "center" },
+  sectionHeaderRow: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+  },
   link: { fontWeight: "600", opacity: 0.7 },
 
   quickRow: { flexDirection: "row", gap: 12 },
 
-  card: { borderRadius: 18, borderWidth: 1, borderColor: "#eee", padding: 16, gap: 10 },
-  cardTitle: { fontSize: 16, fontWeight: "800" },
-  cardText: { opacity: 0.75, lineHeight: 20 },
-
-  primaryBtn: { padding: 14, borderRadius: 14, borderWidth: 1, borderColor: "#ddd", alignItems: "center" },
+  primaryBtn: {
+    padding: 14,
+    borderRadius: 14,
+    borderWidth: 1,
+    borderColor: "#ddd",
+    alignItems: "center",
+  },
   primaryBtnText: { fontWeight: "800" },
 
-  secondaryBtn: { padding: 12, borderRadius: 14, borderWidth: 1, borderColor: "#eee", alignItems: "center" },
+  secondaryBtn: {
+    padding: 12,
+    borderRadius: 14,
+    borderWidth: 1,
+    borderColor: "#eee",
+    alignItems: "center",
+  },
   secondaryBtnText: { fontWeight: "700", opacity: 0.85 },
-
-  eventRow: { flexDirection: "row", alignItems: "center", paddingVertical: 10, gap: 10 },
-  eventIcon: { fontSize: 20, width: 28, textAlign: "center" },
-  eventTitle: { fontWeight: "700" },
-  eventMeta: { fontSize: 12, opacity: 0.6, marginTop: 2 },
-  chev: { fontSize: 22, opacity: 0.25, paddingLeft: 6 },
 });

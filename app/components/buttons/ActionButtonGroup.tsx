@@ -138,23 +138,6 @@ export default function ActionButtonGroup() {
         />
       </View>
 
-      <View style={styles.card}>
-        <Text style={styles.cardTitle}>Most recent</Text>
-        {last ? (
-          <Text style={styles.cardText}>
-            {last.type.toUpperCase()} •{" "}
-            {new Date(last.occurredAt).toLocaleTimeString([], {
-              hour: "numeric",
-              minute: "2-digit",
-            })}
-            {last.durationMin != null
-              ? ` • ${formatDurationMin(last.durationMin)}`
-              : ""}
-          </Text>
-        ) : (
-          <Text style={styles.cardText}>No events yet. Log one above.</Text>
-        )}
-      </View>
 
       {/* Modal only for feed/diaper now */}
       <Modal

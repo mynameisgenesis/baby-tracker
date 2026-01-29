@@ -1,7 +1,8 @@
 import ActionButtonGroup from "@/app/components/buttons/ActionButtonGroup";
+import RecentEvents from "@/app/components/sections/RecentEvents";
 import { useEvents } from "@/app/data/eventsStore";
 import React from "react";
-import { Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
+import { ScrollView, StyleSheet, Text, View } from "react-native";
 
 export function LogScreen() {
   const clearAll = useEvents();
@@ -14,11 +15,16 @@ export function LogScreen() {
         </View>
       </View>
       <ActionButtonGroup />
+      {/* Recent events */}
+      <Text style={styles.cardTitle}>Most recent</Text>
+      <RecentEvents />
     </ScrollView>
   );
 }
 
 const styles = StyleSheet.create({
+  cardTitle: { fontSize: 16, fontWeight: "800" },
+  cardText: { opacity: 0.75, lineHeight: 20 },
   container: { flex: 1, backgroundColor: "#fff" },
   content: { padding: 16, gap: 12 },
 
