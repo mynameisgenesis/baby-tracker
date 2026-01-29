@@ -1,10 +1,22 @@
 import { router } from "expo-router";
 import React, { useMemo, useState } from "react";
-import { Pressable, ScrollView, SectionList, StyleSheet, Text, View } from "react-native";
+import {
+  Pressable,
+  ScrollView,
+  SectionList,
+  StyleSheet,
+  Text,
+  View,
+} from "react-native";
 
-import { EventIcon } from "@/app/components/events/EventIcon";
+import EventIcon from "@/app/components/events/EventIcon";
 import { useEvents } from "../../data/eventsStore";
-import { formatTime, labelForEvent, minutesAgo, startOfDay } from "../../data/helpers";
+import {
+  formatTime,
+  labelForEvent,
+  minutesAgo,
+  startOfDay,
+} from "../../data/helpers";
 import type { BabyEvent, EventType } from "../../data/types";
 
 export type TimelineSection = {
@@ -85,7 +97,11 @@ export function TimelineScreen() {
       </View>
 
       {/* ✅ Filter chips with counts */}
-      <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.chipsRow}>
+      <ScrollView
+        horizontal
+        showsHorizontalScrollIndicator={false}
+        contentContainerStyle={styles.chipsRow}
+      >
         <Chip
           label={`All (${counts.all})`}
           active={filter === "all"}
@@ -121,9 +137,14 @@ export function TimelineScreen() {
       {!hasAnyEvents ? (
         <View style={styles.empty}>
           <Text style={styles.emptyTitle}>No events yet</Text>
-          <Text style={styles.emptyText}>Go to Log and add your first diaper, feed, sleep, or tummy time.</Text>
+          <Text style={styles.emptyText}>
+            Go to Log and add your first diaper, feed, sleep, or tummy time.
+          </Text>
 
-          <Pressable style={styles.primaryBtn} onPress={() => router.push("/log")}>
+          <Pressable
+            style={styles.primaryBtn}
+            onPress={() => router.push("/log")}
+          >
             <Text style={styles.primaryBtnText}>Log something</Text>
           </Pressable>
         </View>
@@ -132,7 +153,10 @@ export function TimelineScreen() {
           <Text style={styles.emptyTitle}>Nothing matches that filter</Text>
           <Text style={styles.emptyText}>Try “All”, or log a new event.</Text>
 
-          <Pressable style={styles.primaryBtn} onPress={() => router.push("/log")}>
+          <Pressable
+            style={styles.primaryBtn}
+            onPress={() => router.push("/log")}
+          >
             <Text style={styles.primaryBtnText}>Log now</Text>
           </Pressable>
         </View>
@@ -148,7 +172,10 @@ export function TimelineScreen() {
             </View>
           )}
           renderItem={({ item }) => (
-            <Pressable style={styles.row} onPress={() => router.push(`/event/${item.id}`)}>
+            <Pressable
+              style={styles.row}
+              onPress={() => router.push(`/event/${item.id}`)}
+            >
               <EventIcon type={item.type} size={20} />
 
               <View style={styles.rowBody}>
@@ -191,7 +218,13 @@ function Chip({
       accessibilityRole="button"
       accessibilityState={{ selected: active, disabled }}
     >
-      <Text style={[styles.chipText, active && styles.chipTextActive, disabled && styles.chipTextDisabled]}>
+      <Text
+        style={[
+          styles.chipText,
+          active && styles.chipTextActive,
+          disabled && styles.chipTextDisabled,
+        ]}
+      >
         {label}
       </Text>
     </Pressable>
@@ -213,7 +246,13 @@ const styles = StyleSheet.create({
   title: { fontSize: 28, fontWeight: "800" },
   subTitle: { fontSize: 13, opacity: 0.6, marginTop: 2 },
 
-  ghostBtn: { paddingHorizontal: 12, paddingVertical: 10, borderRadius: 12, borderWidth: 1, borderColor: "#eee" },
+  ghostBtn: {
+    paddingHorizontal: 12,
+    paddingVertical: 10,
+    borderRadius: 12,
+    borderWidth: 1,
+    borderColor: "#eee",
+  },
   ghostBtnText: { fontWeight: "700", opacity: 0.8 },
 
   chipsRow: { paddingHorizontal: 16, paddingBottom: 10, gap: 10 },
