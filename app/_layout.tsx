@@ -28,9 +28,19 @@ export default function RootLayout() {
 
   if (!ready) return null;
 
-  return (
-    <EventsProvider>
-      <Stack screenOptions={{ headerShown: false }} />
-    </EventsProvider>
-  );
+return (
+  <EventsProvider>
+    <Stack>
+      <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+      <Stack.Screen
+        name="event/[id]"
+        options={{
+          headerShown: true,
+          title: "Event",
+          headerBackTitle: "Back",
+        }}
+      />
+    </Stack>
+  </EventsProvider>
+);
 }
