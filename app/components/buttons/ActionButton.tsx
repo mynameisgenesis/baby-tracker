@@ -1,6 +1,5 @@
 import { EventType } from "@/app/data/types";
 import * as Haptics from "expo-haptics";
-import { LinearGradient } from "expo-linear-gradient";
 import React, { useRef, useState } from "react";
 import { Animated, Pressable, StyleSheet, Text, ViewStyle } from "react-native";
 import EventIcon from "../events/EventIcon";
@@ -72,80 +71,48 @@ export default function ActionButton({
           [
             styles.buttonInner,
             emphasized && styles.buttonInnerEmphasized,
-            pressed && styles.buttonInnerPressed,
             { transform: [{ translateY }, { scale }] },
           ] as unknown as ViewStyle
         }
       >
-        <LinearGradient
-          colors={
-            pressed
-              ? ["#F4F5F7", "#FFFFFF"]
-              : emphasized
-                ? ["#FFFFFF", "#F2F3FF"]
-                : ["#FFFFFF", "#F6F7FA"]
-          }
-          start={{ x: 0, y: 0 }}
-          end={{ x: 0, y: 1 }}
-          style={styles.buttonGradient}
-        >
-          <Text style={styles.buttonIcon}>
-            <EventIcon type={icon} />
-          </Text>
-          <Text style={styles.buttonText}>{title}</Text>
-          {!!subtitle && <Text style={styles.buttonSub}>{subtitle}</Text>}
-        </LinearGradient>
+        <Text style={styles.buttonIcon}>
+          <EventIcon type={icon} size={72} />
+        </Text>
+        <Text style={styles.buttonText}>{title}</Text>
+        {!!subtitle && <Text style={styles.buttonSub}>{subtitle}</Text>}
       </Animated.View>
     </Pressable>
   );
 }
 
 const styles = StyleSheet.create({
+  // Copied style vibe from QuickButton
   buttonOuter: {
     flex: 1,
-    borderRadius: 18,
+    borderRadius: 26,
+    backdropFilter: "blur(4px)",
+    backgroundColor: "rgba(209,243,255, 0.6)",
   },
 
+  // Copied style vibe from QuickButton
   buttonInner: {
-    borderRadius: 18,
-    borderWidth: 1,
-    borderColor: "#eee",
-    overflow: "hidden",
+    borderRadius: 26,
+    backdropFilter: "blur(4px)",
+    backgroundColor: "rgba(209,243,255, 0.6)",
 
-    // iOS shadow
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 8 },
-    shadowOpacity: 0.14,
-    shadowRadius: 10,
-
-    // Android
-    elevation: 8,
-  },
-
-  buttonInnerEmphasized: {
-    borderColor: "#ddd",
-    shadowOffset: { width: 0, height: 10 },
-    shadowOpacity: 0.18,
-    shadowRadius: 12,
-    elevation: 10,
-  },
-
-  buttonInnerPressed: {
-    shadowOffset: { width: 0, height: 3 },
-    shadowOpacity: 0.1,
-    shadowRadius: 6,
-    elevation: 3,
-  },
-
-  buttonGradient: {
     padding: 18,
     alignItems: "center",
     justifyContent: "center",
     gap: 6,
   },
 
+  // Optional: slightly different tint when emphasized (still same “family”)
+  buttonInnerEmphasized: {
+    backgroundColor: "rgba(209,243,255, 0.75)",
+  },
+
   buttonIcon: { fontSize: 28 },
-  buttonText: { fontWeight: "800" },
+  buttonText: { fontSize: 16, fontWeight: "800" },
   buttonSub: {
     fontSize: 12,
     opacity: 0.6,

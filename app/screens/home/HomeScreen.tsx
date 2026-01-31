@@ -9,8 +9,9 @@ import {
   View,
 } from "react-native";
 
+import ActionButton from "@/app/components/buttons/ActionButton";
+import EventPill from "@/app/components/events/EventPill";
 import RecentEvents from "@/app/components/sections/RecentEvents";
-import QuickButton from "../../components/buttons/QuickButton";
 import { useEvents } from "../../data/eventsStore";
 import { minutesAgo } from "../../data/helpers";
 import type { EventType } from "../../data/types";
@@ -61,9 +62,9 @@ export function HomeScreen() {
         </Pressable>
       </View>
 
-      {/* Stats strip */}
-      <View style={styles.statsRow}>
-        <StatPill
+      {/* Event strip */}
+      <View style={styles.contentRow}>
+        <EventPill
           label="Feed"
           value={
             lastByType.get("feed")
@@ -71,7 +72,7 @@ export function HomeScreen() {
               : "—"
           }
         />
-        <StatPill
+        <EventPill
           label="Diaper"
           value={
             lastByType.get("diaper")
@@ -79,7 +80,7 @@ export function HomeScreen() {
               : "—"
           }
         />
-        <StatPill
+        <EventPill
           label="Sleep"
           value={
             lastByType.get("sleep")
@@ -87,7 +88,7 @@ export function HomeScreen() {
               : "—"
           }
         />
-        <StatPill
+        <EventPill
           label="Tummy"
           value={
             lastByType.get("tummy")
@@ -99,23 +100,21 @@ export function HomeScreen() {
 
       {/* Quick log */}
       <Text style={styles.sectionTitle}>Quick Log</Text>
-      <View style={styles.quickRow}>
-        <QuickButton
+      <View style={styles.contentRow}>
+        <ActionButton
           title="Feed"
           icon="feed"
           onPress={() => quickLog("feed")}
         />
 
-        <QuickButton
+        <ActionButton
           title="Diaper"
           icon="diaper"
           onPress={() => quickLog("diaper")}
         />
-        {/* <ActionButton title="Feed" icon="feed" onPress={() => openForm("feed")} />
-          <ActionButton title="Diaper" icon="diaper" onPress={() => openForm("diaper")} /> */}
       </View>
-      <View style={styles.quickRow}>
-        <QuickButton
+      <View style={styles.contentRow}>
+        <ActionButton
           title={activeSleep ? "End Sleep" : "Sleep"}
           icon="sleep"
           onPress={() => {
@@ -129,7 +128,7 @@ export function HomeScreen() {
             }
           }}
         />
-        <QuickButton
+        <ActionButton
           title={activeTummy ? "End Tummy Time" : "Tummy Time"}
           icon="tummy"
           onPress={() => {
@@ -162,18 +161,9 @@ export function HomeScreen() {
   );
 }
 
-function StatPill({ label, value }: { label: string; value: string }) {
-  return (
-    <View style={styles.pill}>
-      <Text style={styles.pillLabel}>{label}</Text>
-      <Text style={styles.pillValue}>{value}</Text>
-    </View>
-  );
-}
-
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: "#fff" },
-  content: { padding: 16, gap: 12 },
+  content: { padding: 16, gap: 20 },
 
   header: {
     flexDirection: "row",
@@ -181,8 +171,8 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     marginBottom: 6,
   },
-  title: { fontSize: 28, fontWeight: "700" },
-  subTitle: { fontSize: 13, opacity: 0.6 },
+  title: { fontSize: 35, fontWeight: "700" },
+  subTitle: { fontSize: 16, opacity: 0.6 },
 
   headerBtn: {
     paddingHorizontal: 12,
@@ -193,27 +183,20 @@ const styles = StyleSheet.create({
   },
   headerBtnText: { fontWeight: "600" },
 
-  statsRow: { flexDirection: "row", gap: 10, flexWrap: "wrap" },
-
-  pill: {
-    padding: 12,
-    borderRadius: 16,
-    borderWidth: 1,
-    borderColor: "#eee",
-    minWidth: 150,
+  contentRow: {
+    flexDirection: "row",
+    gap: 12,
+    flexWrap: "wrap",
+    justifyContent: "space-around",
   },
-  pillLabel: { fontSize: 12, opacity: 0.6, marginBottom: 4 },
-  pillValue: { fontSize: 16, fontWeight: "700" },
 
-  sectionTitle: { fontSize: 16, fontWeight: "700", marginTop: 6 },
+  sectionTitle: { fontSize: 20, fontWeight: "700", marginTop: 10 },
   sectionHeaderRow: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
   },
   link: { fontWeight: "600", opacity: 0.7 },
-
-  quickRow: { flexDirection: "row", gap: 12 },
 
   primaryBtn: {
     padding: 14,

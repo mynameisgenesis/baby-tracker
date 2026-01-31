@@ -1,5 +1,5 @@
 import { useEvents } from "@/app/data/eventsStore";
-import { formatDurationMin, minutesAgo } from "@/app/data/helpers";
+import { minutesAgo } from "@/app/data/helpers";
 import { DiaperKind, EventType, FeedMethod } from "@/app/data/types";
 import { useMemo, useState } from "react";
 import {
@@ -137,7 +137,6 @@ export default function ActionButtonGroup() {
           emphasized={!!activeTummy}
         />
       </View>
-
 
       {/* Modal only for feed/diaper now */}
       <Modal
