@@ -23,6 +23,11 @@ const styles = StyleSheet.create({
     borderRadius: 26,
     backdropFilter: "blur(4px)",
   },
-  pillLabel: { fontSize: 16, opacity: 0.6, marginBottom: 4 },
+  pillLabel: {
+    fontSize: 16,
+    opacity: 0.6,
+    marginBottom: 4,
+    fontFamily: "Quicksand_400Regular",
+  },
   pillValue: { fontSize: 16, fontWeight: "700" },
 });

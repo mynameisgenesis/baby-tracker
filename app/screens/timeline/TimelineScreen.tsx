@@ -243,7 +243,11 @@ const styles = StyleSheet.create({
     alignItems: "center",
     gap: 12,
   },
-  title: { fontSize: 28, fontWeight: "800" },
+  title: {
+    fontSize: 28,
+    fontWeight: "800",
+    fontFamily: "Quicksand_400Regular",
+  },
   subTitle: { fontSize: 13, opacity: 0.6, marginTop: 2 },
 
   ghostBtn: {
@@ -275,7 +279,11 @@ const styles = StyleSheet.create({
   listContent: { paddingHorizontal: 16, paddingBottom: 20 },
 
   sectionHeader: { paddingTop: 14, paddingBottom: 8, backgroundColor: "#fff" },
-  sectionTitle: { fontSize: 14, fontWeight: "800", opacity: 0.65 },
+  sectionTitle: {
+    fontSize: 20,
+    opacity: 0.65,
+    fontFamily: "Quicksand_400Regular",
+  },
 
   row: {
     flexDirection: "row",
@@ -296,7 +304,7 @@ const styles = StyleSheet.create({
   sep: { height: 10 },
 
   empty: { flex: 1, padding: 16, justifyContent: "center", gap: 10 },
-  emptyTitle: { fontSize: 20, fontWeight: "900" },
+  emptyTitle: { fontSize: 20, fontFamily: "Quicksand_400Regular" },
   emptyText: { opacity: 0.7, lineHeight: 20 },
 
   primaryBtn: {

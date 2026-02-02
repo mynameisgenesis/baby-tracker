@@ -170,8 +170,13 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "space-between",
     marginBottom: 6,
+    fontFamily: "Quicksand_400Regular",
   },
-  title: { fontSize: 35, fontWeight: "700" },
+  title: {
+    fontSize: 35,
+    fontWeight: "700",
+    fontFamily: "Quicksand_400Regular",
+  },
   subTitle: { fontSize: 16, opacity: 0.6 },
 
   headerBtn: {
@@ -190,7 +195,12 @@ const styles = StyleSheet.create({
     justifyContent: "space-around",
   },
 
-  sectionTitle: { fontSize: 20, fontWeight: "700", marginTop: 10 },
+  sectionTitle: {
+    fontSize: 20,
+    fontWeight: "700",
+    marginTop: 10,
+    fontFamily: "Quicksand_400Regular",
+  },
   sectionHeaderRow: {
     flexDirection: "row",
     justifyContent: "space-between",

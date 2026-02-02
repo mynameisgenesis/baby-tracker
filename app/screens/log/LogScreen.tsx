@@ -23,7 +23,11 @@ export function LogScreen() {
 }
 
 const styles = StyleSheet.create({
-  cardTitle: { fontSize: 16, fontWeight: "800" },
+  cardTitle: {
+    fontSize: 20,
+    fontWeight: "800",
+    fontFamily: "Quicksand_400Regular",
+  },
   cardText: { opacity: 0.75, lineHeight: 20 },
   container: { flex: 1, backgroundColor: "#fff" },
   content: { padding: 16, gap: 12 },
@@ -33,7 +37,10 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     alignItems: "center",
   },
-  title: { fontSize: 28, fontWeight: "800" },
+  title: {
+    fontSize: 28,
+    fontFamily: "Quicksand_400Regular",
+  },
   subTitle: { fontSize: 13, opacity: 0.6, marginTop: 2 },
 
   ghostBtn: {
