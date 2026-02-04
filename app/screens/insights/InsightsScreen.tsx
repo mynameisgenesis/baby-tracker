@@ -328,7 +328,7 @@ const styles = StyleSheet.create({
   content: { padding: 16, gap: 12 },
 
   header: { flexDirection: "row", justifyContent: "space-between", alignItems: "center", gap: 10 },
-  title: { fontSize: 28, fontWeight: "800" },
+  title: { fontSize: 28, fontFamily: "Quicksand_400Regular",},
   subTitle: { fontSize: 13, opacity: 0.6, marginTop: 2 },
 
   segmented: {
@@ -343,7 +343,7 @@ const styles = StyleSheet.create({
   segmentText: { fontWeight: "800", opacity: 0.65 },
   segmentTextActive: { opacity: 1 },
 
-  sectionTitle: { fontSize: 16, fontWeight: "800", marginTop: 6 },
+  sectionTitle: { fontSize: 20, fontWeight: "800", marginTop: 6, fontFamily: "Quicksand_400Regular", },
 
   gridRow: { flexDirection: "row", gap: 12 },
   card: { flex: 1, borderRadius: 18, borderWidth: 1, borderColor: "#eee", padding: 16, gap: 6 },

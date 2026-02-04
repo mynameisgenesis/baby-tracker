@@ -112,7 +112,7 @@ const styles = StyleSheet.create({
   },
 
   buttonIcon: { fontSize: 28 },
-  buttonText: { fontSize: 16, fontWeight: "500" },
+  buttonText: { fontSize: 16 },
   buttonSub: {
     fontSize: 12,
     opacity: 0.6,

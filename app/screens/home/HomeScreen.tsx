@@ -10,6 +10,7 @@ import {
 } from "react-native";
 
 import ActionButton from "@/app/components/buttons/ActionButton";
+import HeaderButton from "@/app/components/buttons/HeaderButton";
 import EventPill from "@/app/components/events/EventPill";
 import RecentEvents from "@/app/components/sections/RecentEvents";
 import { useEvents } from "../../data/eventsStore";
@@ -53,13 +54,7 @@ export function HomeScreen() {
           <Text style={styles.title}>Today</Text>
           <Text style={styles.subTitle}>Baby Tracker</Text>
         </View>
-
-        <Pressable
-          style={styles.headerBtn}
-          onPress={() => router.push("/timeline")}
-        >
-          <Text style={styles.headerBtnText}>Timeline</Text>
-        </Pressable>
+        <HeaderButton text="Timeline" pageUrl="/timeline" />
       </View>
 
       {/* Event strip */}
@@ -178,15 +173,6 @@ const styles = StyleSheet.create({
     fontFamily: "Quicksand_400Regular",
   },
   subTitle: { fontSize: 16, opacity: 0.6 },
-
-  headerBtn: {
-    paddingHorizontal: 12,
-    paddingVertical: 10,
-    borderRadius: 12,
-    borderWidth: 1,
-    borderColor: "#ddd",
-  },
-  headerBtnText: { fontWeight: "600" },
 
   contentRow: {
     flexDirection: "row",
