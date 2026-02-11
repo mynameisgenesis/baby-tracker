@@ -12,10 +12,11 @@ import {
 import ActionButton from "@/app/components/buttons/ActionButton";
 import HeaderButton from "@/app/components/buttons/HeaderButton";
 import EventPill from "@/app/components/events/EventPill";
+import EventLogModal from "@/app/components/modals/EventLogModal";
 import RecentEvents from "@/app/components/sections/RecentEvents";
 import { useEvents } from "../../data/eventsStore";
 import { minutesAgo } from "../../data/helpers";
-import type { EventType } from "../../data/types";
+import type { ActiveForm, EventType } from "../../data/types";
 
 function useNowTick(intervalMs: number = 15000) {
   const [, setTick] = useState(0);
@@ -28,7 +29,17 @@ function useNowTick(intervalMs: number = 15000) {
 export function HomeScreen() {
   useNowTick(15000);
 
-  const { events, getActiveSession, startSession, endSession } = useEvents();
+  const { addEvent, events, getActiveSession, startSession, endSession } =
+    useEvents();
+  const [active, setActive] = useState<ActiveForm>(null);
+
+  function openForm(type: ActiveForm extends null ? never : ActiveForm) {
+    setActive(type);
+  }
+
+  function closeForm() {
+    setActive(null);
+  }
 
   const activeSleep = getActiveSession("sleep");
   const activeTummy = getActiveSession("tummy_time");
@@ -56,7 +67,6 @@ export function HomeScreen() {
         </View>
         <HeaderButton text="Timeline" pageUrl="/timeline" />
       </View>
-
       {/* Event strip */}
       <View style={styles.contentRow}>
         <EventPill
@@ -92,20 +102,19 @@ export function HomeScreen() {
           }
         />
       </View>
-
       {/* Quick log */}
       <Text style={styles.sectionTitle}>Quick Log</Text>
       <View style={styles.contentRow}>
         <ActionButton
           title="Feed"
           icon="feed"
-          onPress={() => quickLog("feed")}
+          onPress={() => openForm("feed")}
         />
 
         <ActionButton
           title="Diaper"
           icon="diaper"
-          onPress={() => quickLog("diaper")}
+          onPress={() => openForm("diaper")}
         />
       </View>
       <View style={styles.contentRow}>
@@ -140,7 +149,6 @@ export function HomeScreen() {
           }}
         />
       </View>
-
       {/* Mini timeline */}
       <View style={styles.sectionHeaderRow}>
         <Text style={styles.sectionTitle}>Recent</Text>
@@ -150,8 +158,18 @@ export function HomeScreen() {
       </View>
       {/* Now card */}
       <RecentEvents />
-
       <View style={{ height: 24 }} />
+      <EventLogModal
+        active={active}
+        onClose={closeForm}
+        onSaveDiaper={({ occurredAt, diaperKind, note }) =>
+          addEvent({ type: "diaper", occurredAt, diaperKind, note })
+        }
+        onSaveFeed={({ occurredAt, feedMethod, note }) =>
+          addEvent({ type: "feed", occurredAt, feedMethod, note })
+        }
+      />
+      d
     </ScrollView>
   );
 }

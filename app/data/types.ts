@@ -29,3 +29,5 @@ export type BabySession = {
   note?: string;
 };
 
+export type ActiveForm = null | Extract<EventType, "feed" | "diaper">;
+

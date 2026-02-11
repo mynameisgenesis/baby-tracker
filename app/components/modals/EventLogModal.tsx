@@ -144,9 +144,12 @@ const styles = StyleSheet.create({
     alignItems: "center",
     marginBottom: 10,
   },
-  modalTitle: { fontSize: 18, fontWeight: "900" },
+  modalTitle: {
+    fontSize: 22,
+    fontFamily: "Quicksand_400Regular",
+  },
   modalClose: { fontWeight: "800", opacity: 0.7 },
-  label: { fontWeight: "800", opacity: 0.75 },
+  label: { opacity: 0.75 },
   input: {
     borderWidth: 1,
     borderColor: "#eee",

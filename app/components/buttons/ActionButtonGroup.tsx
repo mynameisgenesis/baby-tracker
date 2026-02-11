@@ -1,12 +1,10 @@
 import { useEvents } from "@/app/data/eventsStore";
 import { minutesAgo } from "@/app/data/helpers";
-import { EventType } from "@/app/data/types";
+import { ActiveForm } from "@/app/data/types";
 import { useMemo, useState } from "react";
 import { Alert, StyleSheet, View } from "react-native";
 import EventLogModal from "../modals/EventLogModal";
 import ActionButton from "./ActionButton";
-
-type ActiveForm = null | Extract<EventType, "feed" | "diaper">;
 
 export default function ActionButtonGroup() {
   const { addEvent, events, startSession, endSession, getActiveSession } =
