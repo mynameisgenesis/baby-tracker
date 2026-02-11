@@ -169,7 +169,6 @@ export function HomeScreen() {
           addEvent({ type: "feed", occurredAt, feedMethod, note })
         }
       />
-      d
     </ScrollView>
   );
 }
